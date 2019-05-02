@@ -34,9 +34,11 @@ typedef struct GLOBALS {
 	unsigned int nheap, *heap;
 	// OUTBREAK STATS
 	unsigned int s;
-	// Vaccination Coverage
+	// Vaccination coverage
 	float coverage;
-
+	// Efficacy of vaccination.
+	// It increases the time t (t*efficacy) for the infected node to get the vaccinated node infected.
+	float efficacy;
 	float t;
 	// FOR RNG
 	uint64_t state;
@@ -49,6 +51,7 @@ typedef struct NODE {
 	unsigned int heap;
 	unsigned int ninf; // number of infections
 	unsigned int immunity;
+	float payoff;
     float time;
 } NODE;
 

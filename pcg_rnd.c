@@ -69,11 +69,15 @@ uint16_t pcg_16 () {
 
 	if (exist) {
 		exist = 0;
+		//2^(-16)する
 		return g.rmem >> 16;
 	}
+
 	exist = 1;
 	g.rmem = pcg_32();
+    // %2^(16)
 	return (uint16_t) g.rmem;
+
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
