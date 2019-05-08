@@ -10,3 +10,6 @@ a.out
 outputs.txt
 input.txt
 output.txt
+.DS_Store
+outputs.txt
+input.txt
