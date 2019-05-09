@@ -9,10 +9,10 @@ NODE *n;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // this routine does the bookkeeping for an infection event
 
-int GetRandom(){
-    float my_rand = rand()*(1.0)/(1.0+RAND_MAX);
+int GetRandomInt(float trsh){
+    float my_rand = pcg_16()*(1.0)/(1.0+UINT16_MAX);
 
-    if(my_rand < g.coverage){
+    if(my_rand < trsh){
         return 1;
     }
 
@@ -22,7 +22,7 @@ int GetRandom(){
 }
 
 float GetRandomFloat(){
-    float my_rand = rand()*(1.0)/(1.0+RAND_MAX);
+    float my_rand = pcg_16()*(1.0)/(1.0+UINT16_MAX);
     return my_rand;
 }
 
@@ -79,7 +79,7 @@ void sir () {
 	}
 
 	for(i = 0; i < g.n; i++){
-	    n[i].immunity = GetRandom();
+	    n[i].immunity = GetRandomInt(g.coverage);
 	    if(n[i].immunity == 1){
 	        n[i].payoff += -GetRandomFloat();
 	    }
