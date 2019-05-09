@@ -38,7 +38,7 @@ typedef struct GLOBALS {
 	float coverage;
 	// Efficacy of vaccination.
 	// It increases the time t (t*efficacy) for the infected node to get the vaccinated node infected.
-	//float efficacy;
+	float efficacy;
 	float t;
 	// FOR RNG
 	uint64_t state;
