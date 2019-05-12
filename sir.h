@@ -16,6 +16,9 @@
 #include <stdbool.h>
 
 #define NAVG 100000 // number of runs for averages
+#define RATIONALITY 0.001 // low means rational
+#define VAC_COST 0.5
+#define SEASONS 2
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
@@ -51,6 +54,7 @@ typedef struct NODE {
 	unsigned int heap;
 	unsigned int ninf; // number of infections
 	unsigned int immunity;
+	unsigned int decision;
 	float payoff;
     float time;
 } NODE;
