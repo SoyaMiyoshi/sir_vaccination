@@ -3,7 +3,6 @@
 
 #include "sir.h"
 #include <math.h>
-//#include <omp.h>
 
 GLOBALS g;
 NODE *n;
@@ -177,7 +176,6 @@ int main (int argc, char *argv[]) {
     for (i = 0; i < SEASONS; i++){
         imitate();
 
-        #pragma omp parallel for
         for (i = 0; i < NAVG ; i++) sir();
 
         for (i = 0; i < g.n; i++) n[i].payoff = n[i].payoff / (float) NAVG;
