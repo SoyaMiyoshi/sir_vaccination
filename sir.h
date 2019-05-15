@@ -18,6 +18,7 @@
 #define RATIONALITY 0.001 // low means rational
 #define VAC_COST 0.5
 #define SEASONS 2
+#define CONF_TRSH = 0.9
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX

@@ -85,27 +85,30 @@ void sir () {
 }
 
 void imitate(){
-    unsigned int me,i,you,successful,conf;
+    unsigned int me,i,you,count,successful,_switch;
     int max;
-    float pconf;
+    float pimit, pconf;
 
     // make decisions based on payoff comparison
     for(me = 0; me < g.n; me++){
        max = -100;
        successful = me;
+       count = 0;
        for(i = 0; i < n[me].deg; i++){
             you = n[me].nb[i];
             if(n[you].payoff > max){
                 max = n[you].payoff;
                 successful = you;
             }
+            if(n[you].immunity == 1) count++;
        }
-       pconf = 1/(1 + exp(-(max - n[me].payoff)/RATIONALITY));
-       //printf("%f", pconf);
-       conf = GetRandomInt(pconf);
+       pimit = 1/(1 + exp(-(max - n[me].payoff)/RATIONALITY));
+       if(n[me].immunity == 1) {count = n[me].deg - count;}
+       pconf = 1/(1 + exp(-(count - CONF_TRSH*RATIONALITY)/RATIONALITY))
+
+       _switch = GetRandomInt(pconf);
        if(conf == 1) n[me].decision = n[successful].immunity;
        else n[me].decision = GetRandomInt(0.5);
-       printf("successful neighbour %d, his vacc? %d, so I vacc? %d\n", successful, n[successful].immunity, n[me].decision);
     }
 
     // set immunity based on the decisions, and reset payoff
