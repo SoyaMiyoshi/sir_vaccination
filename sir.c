@@ -212,8 +212,9 @@ int main (int argc, char *argv[]) {
     st1 /= NAVG;
     //st2 /= NAVG;
 
-    printf("avg. outbreak size: %g \n", ss1);
-    printf("avg. time to extinction: %g \n", st1);
+    printf("%g %g\n", ss1, st1);
+    //printf("avg. outbreak size: %g \n", ss1);
+    //printf("avg. time to extinction: %g \n", st1);
 
     for (i = 0; i < g.n ; i++) n[i].payoff = n[i].payoff / (float) NAVG;
 
@@ -234,8 +235,9 @@ int main (int argc, char *argv[]) {
         st1 /= NAVG;
         //st2 /= NAVG;
 
-        printf("avg. outbreak size: %g \n", ss1);
-        printf("avg. time to extinction: %g \n", st1);
+        printf("%g %g\n", ss1, st1);
+        //printf("avg. outbreak size: %g \n", ss1);
+        //printf("avg. time to extinction: %g \n", st1);
 
         for (j = 0; j < g.n; j++) n[j].payoff = n[j].payoff / (float) NAVG;
     }
