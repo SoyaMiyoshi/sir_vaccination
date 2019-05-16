@@ -71,9 +71,10 @@ void sir () {
    }
 
    // get & infect the source
-   while(true){
+   for (i = 0; i < g.n; i++){
        source = pcg_32_bounded(g.n);
        if(n[source].immunity != 1) break;
+       if(i == g.n) break;
    }
 
    n[source].time = 0.0;
@@ -84,16 +85,17 @@ void sir () {
    while (g.nheap) infect();
 }
 
-void imitate(){
-    unsigned int me,i,you,count,successful,_switch;
+void make_strategy(){
+    unsigned int me,i,you,count,successful,majority;
     int max;
-    float pimit, pconf;
+    float pimit, pconf, pto1;
 
-    // make decisions based on payoff comparison
+    // choose strategy in reference to his neighbor
     for(me = 0; me < g.n; me++){
        max = -100;
        successful = me;
        count = 0;
+       majority = 1;
        for(i = 0; i < n[me].deg; i++){
             you = n[me].nb[i];
             if(n[you].payoff > max){
@@ -102,13 +104,16 @@ void imitate(){
             }
             if(n[you].immunity == 1) count++;
        }
-       pimit = 1/(1 + exp(-(max - n[me].payoff)/RATIONALITY));
-       if(n[me].immunity == 1) {count = n[me].deg - count;}
-       pconf = 1/(1 + exp(-(count - CONF_TRSH*RATIONALITY)/RATIONALITY))
+       if(n[me].deg/2 > count ) {majority = 0;}
 
-       _switch = GetRandomInt(pconf);
-       if(conf == 1) n[me].decision = n[successful].immunity;
-       else n[me].decision = GetRandomInt(0.5);
+       pimit = 1/(1 + exp(-(max - n[me].payoff)/g.KI));
+       pconf = 1/(1 + exp(-(count - g.fai * n[me].deg)/g.KC));
+
+       if(n[successful].immunity == 0) pimit = (1 - pimit);
+       if(majority == 0) pconf = (1 - pconf);
+
+       pto1 = pimit + pconf - pimit*pconf;
+       n[me].decision = GetRandomInt(pto1);
     }
 
     // set immunity based on the decisions, and reset payoff
@@ -116,23 +121,27 @@ void imitate(){
         n[me].immunity = n[me].decision;
         n[me].payoff = 0;
         if(n[me].immunity == 1){
-            n[me].payoff += -VAC_COST;
+            n[me].payoff += -g.vac_cost;
         }
+        n[me].ninf = 0;
     }
 
 }
 
 int main (int argc, char *argv[]) {
    unsigned int i, j;
+   double st1 = 0.0, st2 = 0.0, ss1 = 0.0, ss2 = 0.0; // for averages
+
    FILE *fp;
 
    // just a help message
-   if ((argc < 5) || (argc > 6)) {
-      fprintf(stderr, "usage: ./sir [nwk file] [beta] [coverage] [efficacy] <seed>\n");
+   if ((argc < 9) || (argc > 10)) {
+      fprintf(stderr, "usage: ./sir 1[nwk file] 2[beta] 3[coverage] 4[efficacy] "
+                      "5[vac_cost] 6[rationality] 7[conformity] 8[threshold_fraction] <seed>\n");
       return 1;
    }
 
-   if (argc == 6) g.state = (uint64_t) strtoull(argv[5], NULL, 10);
+   if (argc == 10) g.state = (uint64_t) strtoull(argv[9], NULL, 10);
    else pcg_init();
 
    g.beta = atof(argv[2]);
@@ -149,8 +158,29 @@ int main (int argc, char *argv[]) {
        return 1;
    }
 
+    g.vac_cost = atof(argv[5]);
+    if(g.vac_cost < 0 || g.vac_cost > 1  ){
+       fprintf(stderr, "Vaccination cost (5th argv) should be greater than 0 and smaller than 1\n");
+       return 1;
+   }
+
+    g.KI = atof(argv[6]);
+   if(g.KI < 0 ){
+       fprintf(stderr, "Rationality should be greater than 0");
+   }
+
+   g.KC = atof(argv[7]);
+   if(g.KC < 0 ){
+       fprintf(stderr, "Conformity should be greater than 0");
+   }
+
+   g.fai = atof(argv[8]);
+   if(g.fai < 0 || g.fai > 1 ){
+       fprintf(stderr, "Threshold should be greater than 0 and smaller than 1");
+   }
+
    fp = fopen(argv[1], "r");
-   if (!fp) {
+    if (!fp) {
       fprintf(stderr, "can't open '%s'\n", argv[1]);
       return 1;
    }
@@ -159,32 +189,56 @@ int main (int argc, char *argv[]) {
 
    g.heap = malloc((g.n + 1) * sizeof(unsigned int));
 
-   for (i = 0; i < 0x10000; i++)
+    for (i = 0; i < 0x10000; i++)
       g.rexp[i] = -log((i + 1.0) / 0x10000) / g.beta;
 
-    // initial simulation (coverage is user-entered)
+    // initial simulation (coverage is user-entered), first season
     for(j = 0; j < g.n; j++){
         n[j].immunity = GetRandomInt(g.coverage);
-        if(n[j].immunity == 1){
-            n[j].payoff += -VAC_COST;
-                }
+        if(n[j].immunity == 1) {
+            n[j].payoff += -g.vac_cost;
+        }
+    }
+    for (i = 0; i < NAVG; i++) {
         sir();
+        ss1 += (double) g.s;
+        //ss2 += SQ((double) g.s);
+        st1 += g.t;
+        //st2 += SQ(g.t);
     }
 
-   for (i = 0; i < NAVG - 1; i++) sir();
+    ss1 /= NAVG;
+    //ss2 /= NAVG;
+    st1 /= NAVG;
+    //st2 /= NAVG;
+
+    printf("avg. outbreak size: %g \n", ss1);
+    printf("avg. time to extinction: %g \n", st1);
+
     for (i = 0; i < g.n ; i++) n[i].payoff = n[i].payoff / (float) NAVG;
-   // print result
-   for (i = 0; i < g.n; i++) printf("%u %g %g\n", i, n[i].ninf / (double) NAVG, n[i].payoff);
 
+    // from second seasons, each agent chooses his strategy wisely
     for (i = 0; i < SEASONS; i++){
-        imitate();
+        st1 = 0.0, st2 = 0.0, ss1 = 0.0, ss2 = 0.0;
+        make_strategy();
 
-        for (i = 0; i < NAVG ; i++) sir();
+        for (j = 0; j < NAVG ; j++) {
+            sir();
+            ss1 += (double) g.s;
+            //ss2 += SQ((double) g.s);
+            st1 += g.t;
+            //st2 += SQ(g.t);
+        }
+        ss1 /= NAVG;
+        //ss2 /= NAVG;
+        st1 /= NAVG;
+        //st2 /= NAVG;
 
-        for (i = 0; i < g.n; i++) n[i].payoff = n[i].payoff / (float) NAVG;
+        printf("avg. outbreak size: %g \n", ss1);
+        printf("avg. time to extinction: %g \n", st1);
+
+        for (j = 0; j < g.n; j++) n[j].payoff = n[j].payoff / (float) NAVG;
     }
-    printf("-----------------\n");
-    for (i = 0; i < g.n; i++) printf("%u %g %g\n", i, n[i].ninf / (double) NAVG, n[i].payoff);
 
    // cleaning up
    for (i = 0; i < g.n; i++) free(n[i].nb);

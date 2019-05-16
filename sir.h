@@ -14,11 +14,9 @@
 #endif
 #include <stdbool.h>
 
-#define NAVG 100000 // number of runs for averages
-#define RATIONALITY 0.001 // low means rational
-#define VAC_COST 0.5
-#define SEASONS 2
-#define CONF_TRSH = 0.9
+#define NAVG 5 // number of runs for averages
+
+#define SEASONS 100
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
@@ -42,6 +40,15 @@ typedef struct GLOBALS {
 	// Efficacy of vaccination.
 	// It increases the time t (t*efficacy) for the infected node to get the vaccinated node infected.
 	float efficacy;
+
+	/* for eq(4) */
+	float vac_cost; //0 < this < 1
+	float KI; // Rationality strength
+
+	/* for eq(5) */
+	float KC; // Absolute conformity
+	float fai; // Threshold fraction of neighbour
+
 	float t;
 	// FOR RNG
 	uint64_t state;
