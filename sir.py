@@ -5,16 +5,16 @@ import csv
 nrep = 1 # how many networks to average over
 nwk_size = 5
 num_edges = 10*nwk_size
-seasons = 5 #defined in C file
+seasons = 3 #defined in C file
 
 fname = '.tmp_nwkfile'
 
 def run_simulation(beta, coverage, efficacy, vac_cost, rationality, comformity, threshold):
 
-    outbreak_avg = [0 for i in range(seasons + 1)]
-    time_to_extn_avg = [0 for i in range(seasons + 1)]
-    coverage_avg = [0 for i in range(seasons + 1)]  # this range is equal to # of seasons + 1
-    time = [i for i in range(seasons + 1)]
+    outbreak_avg = [0 for i in range(seasons )]
+    time_to_extn_avg = [0 for i in range(seasons )]
+    coverage_avg = [0 for i in range(seasons)]  # this range is equal to # of seasons + 1
+    time = [i for i in range(seasons)]
 
     for rep in range(nrep):
 
@@ -59,11 +59,11 @@ def run_simulation(beta, coverage, efficacy, vac_cost, rationality, comformity, 
 
 
 betas = [2.0] # beta values to test
-coverages = [0.1, 0.3, 0.6, 0.9]
-efficacies = [1.5, 2.0, 4.0, 100] # 1 means no medical efficacy
-vac_costs = [0.1, 0.9] # btwn 0 to 1
-rationalities =[0.001] # low means less at-random
-inverse_conformities = [0.001]  # low means less at-random
+coverages = [0.6]
+efficacies = [4.0] # 1 means no medical efficacy
+vac_costs = [0.9] # btwn 0 to 1
+rationalities =[0.9] # low means less at-random
+inverse_conformities = [0.9]  # low means less at-random
 threshold_fractions = [0.9]
 
 input_list = []

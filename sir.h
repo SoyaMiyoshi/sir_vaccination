@@ -16,7 +16,7 @@
 
 #define NAVG 100 // number of runs for averages
 
-#define SEASONS 5
+#define SEASONS 3
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
@@ -79,5 +79,9 @@ extern uint16_t pcg_16 ();
 extern uint32_t pcg_32 ();
 extern uint32_t pcg_32_bounded ();
 extern void pcg_init ();
+extern int GetRandomInt(float);
+extern float GetRandomFloat();
 
+// make_strategy.c
+extern void make_strategy (FILE *);
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
