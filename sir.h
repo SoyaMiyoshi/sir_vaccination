@@ -1,6 +1,5 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // code for SIR on networks by Petter Holme (2018)
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,7 +14,9 @@
 #endif
 #include <stdbool.h>
 
-#define NAVG 100000 // number of runs for averages
+#define NAVG 100 // number of runs for averages
+
+#define SEASONS 3
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
@@ -39,6 +40,15 @@ typedef struct GLOBALS {
 	// Efficacy of vaccination.
 	// It increases the time t (t*efficacy) for the infected node to get the vaccinated node infected.
 	float efficacy;
+
+	/* for eq(4) */
+	float vac_cost; //0 < this < 1
+	float KI; // Rationality strength
+
+	/* for eq(5) */
+	float KC; // Absolute conformity
+	float fai; // Threshold fraction of neighbour
+
 	float t;
 	// FOR RNG
 	uint64_t state;
@@ -51,6 +61,7 @@ typedef struct NODE {
 	unsigned int heap;
 	unsigned int ninf; // number of infections
 	unsigned int immunity;
+	unsigned int decision;
 	float payoff;
     float time;
 } NODE;
@@ -68,5 +79,9 @@ extern uint16_t pcg_16 ();
 extern uint32_t pcg_32 ();
 extern uint32_t pcg_32_bounded ();
 extern void pcg_init ();
+extern int GetRandomInt(float);
+extern float GetRandomFloat();
 
+// make_strategy.c
+extern void make_strategy (FILE *);
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

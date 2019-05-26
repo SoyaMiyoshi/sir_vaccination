@@ -12,12 +12,6 @@
 extern NODE *n;
 extern GLOBALS g;
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// reads the network, assumes an edge list with vertex label 0,N-1
-// if your network has nodes with degree zero, make sure that none of them is
-// the node with largest index
-
-
 void read_data (FILE *fp) {
 	unsigned int i, me, you;
 
@@ -56,5 +50,3 @@ void read_data (FILE *fp) {
 		n[you].nb[n[you].deg++] = me;
 	}
 }
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
