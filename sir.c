@@ -3,6 +3,7 @@
 
 #include "sir.h"
 #include <math.h>
+#include <stdlib.h>
 
 GLOBALS g;
 NODE *n;
@@ -85,15 +86,16 @@ void sir () {
    while (g.nheap) infect();
 }
 
-void make_strategy(){
+
+void make_strategy(FILE *output){
     unsigned int me,i,you,count,successful,majority;
     int max;
-    float pimit, pconf, pto1;
+    float pimit, pconf, pto1, covrg_each;
+    covrg_each = 0;
 
     // choose strategy in reference to his neighbor
     for(me = 0; me < g.n; me++){
        max = -100;
-       successful = me;
        count = 0;
        majority = 1;
        for(i = 0; i < n[me].deg; i++){
@@ -104,9 +106,30 @@ void make_strategy(){
             }
             if(n[you].immunity == 1) count++;
        }
-       if(n[me].deg/2 > count ) {majority = 0;}
+       if( (n[me].deg+1)/2 > count ) {majority = 0; count = n[me].deg - count;}
+
+       if (n[me].immunity == 1){
+       // Probability that switch to 0
+
+       /* swith_to_0 <= (successful.payoff, me.payoff, num of majority){
+                if(successful.immunity == 0 && majority == 0){
+                    p(imitate to successful) + p(follow the majority) - p(imitate to successful) * p(follow the majority);
+                }
+                if(successful.immunity == 1 && majority == 0){
+                    ??
+
+                }
+
+           }*/
+
+       }
+
+       if (n[me].immunity == 0){
+       // Probability that switch to 1
+       }
 
        pimit = 1/(1 + exp(-(max - n[me].payoff)/g.KI));
+       fprintf(output, "max - n[me] = %f pimit(raw) = %f\n", max - n[me].payoff, pimit );
        pconf = 1/(1 + exp(-(count - g.fai * n[me].deg)/g.KC));
 
        if(n[successful].immunity == 0) pimit = (1 - pimit);
@@ -114,7 +137,13 @@ void make_strategy(){
 
        pto1 = pimit + pconf - pimit*pconf;
        n[me].decision = GetRandomInt(pto1);
+
+       //fprintf(output,"Num of vaccinated around me = %d, I know %d neighbours, so majority is %d\n", count, n[me].deg, majority);
+       //fprintf(output, "pimit is %f coz %f, pconf is %f coz %f, pto1 is %f, therefore I do %d\n",
+       //         pimit, max - n[me].payoff, pconf, count - g.fai * n[me].deg, pto1, n[me].decision);
     }
+
+    fprintf(output, "---------\n");
 
     // set immunity based on the decisions, and reset payoff
     for(me = 0; me < g.n; me++){
@@ -122,9 +151,12 @@ void make_strategy(){
         n[me].payoff = 0;
         if(n[me].immunity == 1){
             n[me].payoff += -g.vac_cost;
+            covrg_each += 1.0;
         }
         n[me].ninf = 0;
     }
+
+    g.coverage = covrg_each/g.n;
 
 }
 
@@ -167,16 +199,19 @@ int main (int argc, char *argv[]) {
     g.KI = atof(argv[6]);
    if(g.KI < 0 ){
        fprintf(stderr, "Rationality should be greater than 0");
+       return 1;
    }
 
    g.KC = atof(argv[7]);
    if(g.KC < 0 ){
-       fprintf(stderr, "Conformity should be greater than 0");
+       fprintf(stderr, "Inverse conformity should be greater than 0 and smaller than 1.");
+       return 1;
    }
 
    g.fai = atof(argv[8]);
    if(g.fai < 0 || g.fai > 1 ){
        fprintf(stderr, "Threshold should be greater than 0 and smaller than 1");
+       return 1;
    }
 
    fp = fopen(argv[1], "r");
@@ -212,16 +247,19 @@ int main (int argc, char *argv[]) {
     st1 /= NAVG;
     //st2 /= NAVG;
 
-    printf("%g %g\n", ss1, st1);
+    printf("%g %g %f\n", ss1, st1, g.coverage);
     //printf("avg. outbreak size: %g \n", ss1);
     //printf("avg. time to extinction: %g \n", st1);
 
     for (i = 0; i < g.n ; i++) n[i].payoff = n[i].payoff / (float) NAVG;
 
+    FILE *output;
+    output = fopen("make_strategy.txt", "a+");
+
     // from second seasons, each agent chooses his strategy wisely
     for (i = 0; i < SEASONS; i++){
         st1 = 0.0, st2 = 0.0, ss1 = 0.0, ss2 = 0.0;
-        make_strategy();
+        make_strategy(output);
 
         for (j = 0; j < NAVG ; j++) {
             sir();
@@ -235,12 +273,13 @@ int main (int argc, char *argv[]) {
         st1 /= NAVG;
         //st2 /= NAVG;
 
-        printf("%g %g\n", ss1, st1);
+        printf("%g %g %f\n", ss1, st1, g.coverage);
         //printf("avg. outbreak size: %g \n", ss1);
         //printf("avg. time to extinction: %g \n", st1);
 
         for (j = 0; j < g.n; j++) n[j].payoff = n[j].payoff / (float) NAVG;
     }
+    fclose(output);
 
    // cleaning up
    for (i = 0; i < g.n; i++) free(n[i].nb);
