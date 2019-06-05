@@ -24,12 +24,7 @@ void infect () {
       you = n[me].nb[i];
       if (n[you].heap != I_OR_R) { // if you is S, you can be infected
 
-          if(n[you].immunity == 1){
-             t = now + g.efficacy*g.rexp[pcg_16()]; // get the infection time
-         }
-         else{
-             t = now + g.rexp[pcg_16()];
-         }
+         t = now + g.rexp[pcg_16()];
 
          if ((t < n[me].time) && (t < n[you].time)) {
             n[you].time = t;
@@ -85,13 +80,12 @@ int main (int argc, char *argv[]) {
    FILE *fp;
 
    // just a help message
-   if ((argc < 9) || (argc > 10)) {
-      fprintf(stderr, "usage: ./sir 1[nwk file] 2[beta] 3[coverage] 4[efficacy] "
-                      "5[vac_cost] 6[rationality] 7[conformity] 8[threshold_fraction] <seed>\n");
+   if ((argc < 7) || (argc > 8)) {
+      fprintf(stderr, "usage: ./sir 1[nwk file] 2[beta] 3[initial_coverage] 4[cost of vaccination] 5[fraction of conformist] 6[fraction of zealot] <seed>\n");
       return 1;
    }
 
-   if (argc == 10) g.state = (uint64_t) strtoull(argv[9], NULL, 10);
+   if (argc == 8) g.state = (uint64_t) strtoull(argv[7], NULL, 10);
    else pcg_init();
 
    g.beta = atof(argv[2]);
@@ -102,33 +96,19 @@ int main (int argc, char *argv[]) {
        return 1;
    }
 
-   g.efficacy = atof(argv[4]);
-   if(g.efficacy < 0 ){
-       fprintf(stderr, "Efficacy should be greater than 0.\n");
+   g.vac_cost = atof(argv[4]);
+   if(g.vac_cost < 0 || g.vac_cost > 1  ){
+       fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
        return 1;
    }
 
-    g.vac_cost = atof(argv[5]);
-    if(g.vac_cost < 0 || g.vac_cost > 1  ){
-       fprintf(stderr, "Vaccination cost (5th argv) should be greater than 0 and smaller than 1\n");
+   g.conformist_fraction = atof(argv[5]);
        return 1;
    }
 
-    g.KI = atof(argv[6]);
-   if(g.KI < 0 ){
-       fprintf(stderr, "Rationality should be greater than 0");
-       return 1;
-   }
-
-   g.KC = atof(argv[7]);
-   if(g.KC < 0 ){
-       fprintf(stderr, "Inverse conformity should be greater than 0 and smaller than 1.");
-       return 1;
-   }
-
-   g.fai = atof(argv[8]);
-   if(g.fai < 0 || g.fai > 1 ){
-       fprintf(stderr, "Threshold should be greater than 0 and smaller than 1");
+   g.zealot_fraction = atof(argv[6]);
+   if(g.vac_cost < 0 || g.vac_cost > 1  ){
+       fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
        return 1;
    }
 
@@ -172,13 +152,14 @@ int main (int argc, char *argv[]) {
     for (i = 0; i < g.n ; i++) n[i].payoff = n[i].payoff / (float) NAVG;
 
     FILE *output;
-    output = fopen("output/make_strategy.txt", "a+");
-    fprintf(output, "inverse rationality = %f, inverse conformity = %f , threshold = %f \n", g.KI, g.KC, g.fai);
+    output = fopen("output/test.csv", "a+");
+    // fprintf(output, "inverse rationality = %f, inverse conformity = %f , threshold = %f \n", g.KI, g.KC, g.fai);
+    // fprintf(output, "P_imitate, P_conform, P \n");
 
     // from second seasons, each agent chooses his strategy wisely
     for (i = 1; i < SEASONS; i++){
         st1 = 0.0, ss1 = 0.0;
-        //st2 = 0.0, ss2 = 0.0;
+        // st2 = 0.0, ss2 = 0.0;
         make_strategy(output);
 
         for (j = 0; j < NAVG ; j++) {

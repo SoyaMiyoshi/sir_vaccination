@@ -16,7 +16,7 @@
 
 #define NAVG 100 // number of runs for averages
 
-#define SEASONS 3
+#define SEASONS 10
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
@@ -37,17 +37,7 @@ typedef struct GLOBALS {
 	unsigned int s;
 	// Vaccination coverage
 	float coverage;
-	// Efficacy of vaccination.
-	// It increases the time t (t*efficacy) for the infected node to get the vaccinated node infected.
-	float efficacy;
-
-	/* for eq(4) */
 	float vac_cost; //0 < this < 1
-	float KI; // Rationality strength
-
-	/* for eq(5) */
-	float KC; // Absolute conformity
-	float fai; // Threshold fraction of neighbour
 
 	float t;
 	// FOR RNG

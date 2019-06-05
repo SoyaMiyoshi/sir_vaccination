@@ -3,9 +3,9 @@ import subprocess
 import csv
 
 nrep = 1 # how many networks to average over
-nwk_size = 5
+nwk_size = 10000
 num_edges = 10*nwk_size
-seasons = 3 #defined in C file
+seasons = 10 #defined in C file
 
 fname = '.tmp_nwkfile'
 
@@ -59,12 +59,12 @@ def run_simulation(beta, coverage, efficacy, vac_cost, rationality, comformity, 
 
 
 betas = [2.0] # beta values to test
-coverages = [0.6]
-efficacies = [4.0] # 1 means no medical efficacy
-vac_costs = [0.9] # btwn 0 to 1
-rationalities =[0.9] # low means less at-random
-inverse_conformities = [0.9]  # low means less at-random
-threshold_fractions = [0.9]
+coverages = [0.8]
+efficacies = [1.5] # 1 means no medical efficacy
+vac_costs = [0.6] # btwn 0 to 1
+rationalities =[0.6] # low means less at-random
+inverse_conformities = [0.6]  # low means less at-random
+threshold_fractions = [0.7]
 
 input_list = []
 
