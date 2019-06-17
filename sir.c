@@ -8,6 +8,7 @@
 GLOBALS g;
 NODE *n;
 
+
 void infect () {
    unsigned int i, you, me = g.heap[1];
    float t, now = n[me].time;
@@ -22,7 +23,13 @@ void infect () {
    // go through the neighbors of the infected node . .
    for (i = 0; i < n[me].deg; i++) {
       you = n[me].nb[i];
-      if (n[you].heap != I_OR_R) { // if you is S, you can be infected
+
+       // Actually, is "deleting" node possible? Because if deleted the vaccinated node, then payoff comparison will be troublesome
+       // (will need to undo the deletion)
+       // Instead, I did this.
+       // I know it requires to refer to the immune node thus a bit inefficient, too.
+
+      if (n[you].heap != I_OR_R && n[you].immunity == 0) { // if you is S, and not immune,  you can be infected.
 
          t = now + g.rexp[pcg_16()];
 
@@ -79,9 +86,14 @@ int main (int argc, char *argv[]) {
 
    FILE *fp;
 
-   // just a help message
+   // a help message
    if ((argc < 7) || (argc > 8)) {
-      fprintf(stderr, "usage: ./sir 1[nwk file] 2[beta] 3[initial_coverage] 4[cost of vaccination] 5[fraction of conformist] 6[fraction of zealot] <seed>\n");
+      fprintf(stderr, "usage: ./sir 1[nwk file] 2[beta] 3[initial coverage] \n"
+                      "4[cost of vaccination] 5[fraction of conformist] 6[fraction of zealot] <seed>\n"
+                      "Note that 3[initial coverage] and 5[fraction of conformist] refers to the fraction of the population that belongs to each class\n"
+                      "EXCLUDING the zealot.\n"
+                      "For example, if 10 percent of the population is zealot, then out of the rest (90 percent)*(initial coverage) percent would get vaccination.\n"
+                      );
       return 1;
    }
 
@@ -102,10 +114,14 @@ int main (int argc, char *argv[]) {
        return 1;
    }
 
+   // Actually this does not need to be stored in GLOBALS but I do so for consistency of the code
    g.conformist_fraction = atof(argv[5]);
+   if(g.vac_cost < 0 || g.vac_cost > 1  ){
+       fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
        return 1;
    }
 
+   // This too
    g.zealot_fraction = atof(argv[6]);
    if(g.vac_cost < 0 || g.vac_cost > 1  ){
        fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
@@ -113,7 +129,7 @@ int main (int argc, char *argv[]) {
    }
 
    fp = fopen(argv[1], "r");
-    if (!fp) {
+   if (!fp) {
       fprintf(stderr, "can't open '%s'\n", argv[1]);
       return 1;
    }
@@ -122,16 +138,35 @@ int main (int argc, char *argv[]) {
 
    g.heap = malloc((g.n + 1) * sizeof(unsigned int));
 
-    for (i = 0; i < 0x10000; i++)
-      g.rexp[i] = -log((i + 1.0) / 0x10000) / g.beta;
+    for (i = 0; i < 0x10000; i++) {
+        g.rexp[i] = -log((i + 1.0) / 0x10000) / g.beta;
+    }
 
-    // initial simulation (coverage is user-entered), first season
+    // are you a zealot? if not, are you a conformist?
     for(j = 0; j < g.n; j++){
-        n[j].immunity = GetRandomInt(g.coverage);
-        if(n[j].immunity == 1) {
-            n[j].payoff += -g.vac_cost;
+
+        // zealot always refuses vaccination
+        n[j].is_zealot = GetRandomInt(g.zealot_fraction);
+
+        if(n[j].is_zealot == 1) {
+            n[j].immunity = 0;
+            n[j].decision = 0;
+        }
+
+        if(n[j].is_zealot == 0) {
+            // if (is_zealot) n[j].is_conformist = 0 is not necessary here because if it is a zealot it ignores all
+            n[j].is_conformist = GetRandomInt(g.conformist_fraction);
+
+            // For initial simulation, choose nodes to vaccinate randomly
+            // by user-input initial coverage
+            n[j].immunity = GetRandomInt(g.coverage);
+            if (n[j].immunity == 1) {
+                n[j].payoff += -g.vac_cost;
+            }
         }
     }
+
+
     for (i = 0; i < NAVG; i++) {
         sir();
         ss1 += (double) g.s;
@@ -151,15 +186,21 @@ int main (int argc, char *argv[]) {
 
     for (i = 0; i < g.n ; i++) n[i].payoff = n[i].payoff / (float) NAVG;
 
+    FILE *out;
+    out = fopen("output/test.csv", "w");
+    fprintf(out, "zealot?,conformist?,how many neighbour vaccinate?,decision? \n");
+    fclose(out);
+
     FILE *output;
     output = fopen("output/test.csv", "a+");
-    // fprintf(output, "inverse rationality = %f, inverse conformity = %f , threshold = %f \n", g.KI, g.KC, g.fai);
+
     // fprintf(output, "P_imitate, P_conform, P \n");
 
     // from second seasons, each agent chooses his strategy wisely
     for (i = 1; i < SEASONS; i++){
         st1 = 0.0, ss1 = 0.0;
         // st2 = 0.0, ss2 = 0.0;
+        // The file output is for a debugging purpose
         make_strategy(output);
 
         for (j = 0; j < NAVG ; j++) {

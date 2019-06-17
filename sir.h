@@ -16,7 +16,7 @@
 
 #define NAVG 100 // number of runs for averages
 
-#define SEASONS 10
+#define SEASONS 100
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
@@ -28,7 +28,7 @@
 
 typedef struct GLOBALS {
 	// INPUT PARAMETERS
-	float beta; // infection rate
+	float beta; // infection rate argv[2]
 	// NETWORK SPECS
 	unsigned int n;
 	// OTHER GLOBALS
@@ -36,8 +36,11 @@ typedef struct GLOBALS {
 	// OUTBREAK STATS
 	unsigned int s;
 	// Vaccination coverage
-	float coverage;
-	float vac_cost; //0 < this < 1
+	float coverage; // argv[3]
+	float vac_cost; //0 < this < 1 argv[4]
+
+	float conformist_fraction; // argv[5]
+	float zealot_fraction; // argv[6]
 
 	float t;
 	// FOR RNG
@@ -54,6 +57,10 @@ typedef struct NODE {
 	unsigned int decision;
 	float payoff;
     float time;
+
+    unsigned int is_zealot;
+    unsigned int is_conformist;
+
 } NODE;
 
 // heap.c
