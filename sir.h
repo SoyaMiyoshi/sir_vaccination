@@ -16,7 +16,7 @@
 
 #define NAVG 100 // number of runs for averages
 
-#define SEASONS 3
+#define SEASONS 100
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
@@ -28,7 +28,7 @@
 
 typedef struct GLOBALS {
 	// INPUT PARAMETERS
-	float beta; // infection rate
+	float beta; // infection rate argv[2]
 	// NETWORK SPECS
 	unsigned int n;
 	// OTHER GLOBALS
@@ -36,18 +36,11 @@ typedef struct GLOBALS {
 	// OUTBREAK STATS
 	unsigned int s;
 	// Vaccination coverage
-	float coverage;
-	// Efficacy of vaccination.
-	// It increases the time t (t*efficacy) for the infected node to get the vaccinated node infected.
-	float efficacy;
+	float coverage; // argv[3]
+	float vac_cost; //0 < this < 1 argv[4]
 
-	/* for eq(4) */
-	float vac_cost; //0 < this < 1
-	float KI; // Rationality strength
-
-	/* for eq(5) */
-	float KC; // Absolute conformity
-	float fai; // Threshold fraction of neighbour
+	float conformist_fraction; // argv[5]
+	float zealot_fraction; // argv[6]
 
 	float t;
 	// FOR RNG
@@ -64,6 +57,10 @@ typedef struct NODE {
 	unsigned int decision;
 	float payoff;
     float time;
+
+    unsigned int is_zealot;
+    unsigned int is_conformist;
+
 } NODE;
 
 // heap.c
