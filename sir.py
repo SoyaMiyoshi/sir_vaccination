@@ -43,8 +43,8 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot):
     time_to_extn_avg = [float(i)/nrep for i in time_to_extn_avg]
     coverage_avg = [float(i)/nrep for i in coverage_avg]
 
-    file_name = "/Volumes/Samsung_T5/vac_game2/" +"B="+ str(beta) + "Cov=" + str(coverage) + "VC=" \
-                    + str(vac_cost) + "conf = " + str(frac_conf) + "z=" + str(frac_zealot) + ".csv"
+    file_name = "output1/" +"B="+ str(beta) + "Cov=" + str(coverage) + "VC=" \
+                    + str(vac_cost) + "conf=" + str(frac_conf) + "z=" + str(frac_zealot) + ".csv"
 
     try:
         with open(file_name,'w') as csvfile:
