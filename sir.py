@@ -115,5 +115,7 @@ for beta in betas:
 
 print(input_list)
 
+from multiprocessing import Pool
+
 p = Pool(4)
 p.starmap(run_simulation, input_list)
