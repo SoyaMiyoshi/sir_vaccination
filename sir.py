@@ -43,7 +43,7 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot):
     time_to_extn_avg = [float(i)/nrep for i in time_to_extn_avg]
     coverage_avg = [float(i)/nrep for i in coverage_avg]
 
-    file_name = "/Volumes/Samsung_T5/vac_game2/" +"B="+ str(beta) + "Cov=" + str(coverage) + "VC=" \
+    file_name = "output1/" +"B="+ str(beta) + "Cov=" + str(coverage) + "VC=" \
                     + str(vac_cost) + "conf = " + str(frac_conf) + "z=" + str(frac_zealot) + ".csv"
 
     try:
@@ -70,7 +70,7 @@ betas = [4.0] # beta values to test
 coverages = [0.9]
 vac_costs = [0.6] # btwn 0 to 1 (cost of falling illness is set to 1)
 frac_confs = [0.1]
-frac_zealots = [0.1, 0.2, 0.3, 0.4, 0.5]
+frac_zealots = [0.4, 0.45, 0.5, 0.55]
 
 input_list = []
 

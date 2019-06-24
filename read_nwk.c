@@ -4,18 +4,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "sir.h"
 
 extern NODE *n;
 extern GLOBALS g;
 
-void read_data (FILE *fp) {
+void read_data(FILE *fp) {
 	unsigned int i, me, you;
 
-    g.n = 0;
+	g.n = 0;
 
 	// scan the system size
 	while (2 == fscanf(fp, "%u %u\n", &me, &you)) {
@@ -37,7 +35,7 @@ void read_data (FILE *fp) {
 
 	// allocate adjacency lists
 	for (i = 0; i < g.n; i++) {
-	    n[i].payoff = 0;
+		n[i].payoff = 0;
 		n[i].nb = malloc(n[i].deg * sizeof(unsigned int));
 		n[i].deg = 0;
 	}

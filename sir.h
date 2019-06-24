@@ -1,20 +1,20 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // code for SIR on networks by Petter Holme (2018)
+#include <fcntl.h>
+#include <float.h>
+#include <limits.h>
+#include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-#include <float.h>
-#include <fcntl.h>
 #include <unistd.h>
-#include <limits.h>
-#include <stdint.h>
 #ifdef TIME
 #include <time.h>
 #endif
 #include <stdbool.h>
 
-#define NAVG 100 // number of runs for averages
+#define NAVG 100  // number of runs for averages
 
 #define SEASONS 100
 
@@ -28,7 +28,7 @@
 
 typedef struct GLOBALS {
 	// INPUT PARAMETERS
-	float beta; // infection rate argv[2]
+	float beta;  // infection rate argv[2]
 	// NETWORK SPECS
 	unsigned int n;
 	// OTHER GLOBALS
@@ -36,11 +36,11 @@ typedef struct GLOBALS {
 	// OUTBREAK STATS
 	unsigned int s;
 	// Vaccination coverage
-	float coverage; // argv[3]
-	float vac_cost; //0 < this < 1 argv[4]
+	float coverage;  // argv[3]
+	float vac_cost;  // 0 < this < 1 argv[4]
 
-	float conformist_fraction; // argv[5]
-	float zealot_fraction; // argv[6]
+	float conformist_fraction;  // argv[5]
+	float zealot_fraction;      // argv[6]
 
 	float t;
 	// FOR RNG
@@ -50,35 +50,35 @@ typedef struct GLOBALS {
 } GLOBALS;
 
 typedef struct NODE {
-	unsigned int deg, *nb; // degree and network neighbors
+	unsigned int deg, *nb;  // degree and network neighbors
 	unsigned int heap;
-	unsigned int ninf; // number of infections
+	unsigned int ninf;  // number of infections
 	unsigned int immunity;
 	unsigned int decision;
 	float payoff;
-    float time;
+	float time;
 
-    unsigned int is_zealot;
-    unsigned int is_conformist;
+	unsigned int is_zealot;
+	unsigned int is_conformist;
 
 } NODE;
 
 // heap.c
-extern void up_heap (unsigned int);
-extern void del_root ();
+extern void up_heap(unsigned int);
+extern void del_root();
 
 // misc.c
-extern void init_rng ();
-extern void read_data (FILE *);
+extern void init_rng();
+extern void read_data(FILE *);
 
 // pcg_rnd.c
-extern uint16_t pcg_16 ();
-extern uint32_t pcg_32 ();
-extern uint32_t pcg_32_bounded ();
-extern void pcg_init ();
+extern uint16_t pcg_16();
+extern uint32_t pcg_32();
+extern uint32_t pcg_32_bounded();
+extern void pcg_init();
 extern int GetRandomInt(float);
 extern float GetRandomFloat();
 
 // make_strategy.c
-extern void make_strategy (FILE *);
+extern void make_strategy(FILE *);
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

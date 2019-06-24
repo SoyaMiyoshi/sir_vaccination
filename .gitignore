@@ -15,4 +15,4 @@ outputs.txt
 input.txt
 /output
 ./output
-output
+output*
