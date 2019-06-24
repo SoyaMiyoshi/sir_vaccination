@@ -44,7 +44,7 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot):
     coverage_avg = [float(i)/nrep for i in coverage_avg]
 
     file_name = "output1/" +"B="+ str(beta) + "Cov=" + str(coverage) + "VC=" \
-                    + str(vac_cost) + "conf = " + str(frac_conf) + "z=" + str(frac_zealot) + ".csv"
+                    + str(vac_cost) + "conf=" + str(frac_conf) + "z=" + str(frac_zealot) + ".csv"
 
     try:
         with open(file_name,'w') as csvfile:
