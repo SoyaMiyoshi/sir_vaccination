@@ -16,7 +16,7 @@
 
 #define NAVG 100  // number of runs for averages
 
-#define SEASONS 100
+#define SEASONS 5
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX

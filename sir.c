@@ -8,7 +8,7 @@
 GLOBALS g;
 NODE *n;
 
-void infect() {
+void infect(FILE *output) {
 	unsigned int i, you, me = g.heap[1];
 	float t, now = n[me].time;
 
@@ -23,13 +23,6 @@ void infect() {
 	// go through the neighbors of the infected node . .
 	for (i = 0; i < n[me].deg; i++) {
 		you = n[me].nb[i];
-
-		// Actually, is "deleting" node possible? Because if deleted the
-		// vaccinated node, then payoff comparison will be troublesome
-		// (will need to undo the deletion)
-		// Instead, I did this.
-		// I know it requires to refer to the immune node thus a bit
-		// inefficient, too.
 
 		if (n[you].heap != I_OR_R &&
 		    n[you].immunity == 0) {  // if you is S, and not immune, you
@@ -46,6 +39,7 @@ void infect() {
 					n[you].heap = g.nheap;
 					n[you].payoff = n[you].payoff - 1.0;
 					n[you].ninf++;
+					//fprintf(output, "oops, node %d get infected!\n", you);
 				}
 				up_heap(
 				    n[you].heap);  // this works bcoz the only
@@ -60,7 +54,7 @@ void infect() {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // this routine runs one SIR outbreak from a random seed node
 
-void sir() {
+void sir(FILE *output) {
 	unsigned int i, source = 0;
 
 	g.t = 0.0;
@@ -75,7 +69,11 @@ void sir() {
 	// get & infect the source
 	for (i = 0; i < g.n; i++) {
 		source = pcg_32_bounded(g.n);
-		if (n[source].immunity != 1) break;
+		if (n[source].immunity != 1) {
+		    n[source].payoff = n[source].payoff - 1;
+		    //fprintf(output, "source is %d \n", source);
+            break;
+        }
 		if (i == g.n) break;
 	}
 
@@ -84,7 +82,7 @@ void sir() {
 	g.heap[g.nheap = 1] = source;
 
 	// run the outbreak
-	while (g.nheap) infect();
+	while (g.nheap) infect(output);
 }
 
 int main(int argc, char *argv[]) {
@@ -185,8 +183,21 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	for (i = 0; i < NAVG; i++) {
-		sir();
+	FILE *out;
+	out = fopen("output/log.txt", "w");
+	/*fprintf(
+	    out,
+	    "zealot?,conformist?,how many neighbour vaccinate?,decision? \n");
+	*/
+	fclose(out);
+
+	FILE *output;
+	output = fopen("output/log.txt", "a+");
+
+	fprintf(output, "This is season 0\n");
+
+	for (int k = 0; k < NAVG; k++) {
+		sir(output);
 		ss1 += (double)g.s;
 		// ss2 += SQ((double) g.s);
 		st1 += g.t;
@@ -202,17 +213,26 @@ int main(int argc, char *argv[]) {
 	// printf("avg. outbreak size: %g \n", ss1);
 	// printf("avg. time to extinction: %g \n", st1);
 
-	for (i = 0; i < g.n; i++) n[i].payoff = n[i].payoff / (float)NAVG;
+	for (i = 0; i < g.n; i++){
+	    if(n[i].immunity != 1) {
+            n[i].payoff = n[i].payoff / (float) NAVG;
+        }
+	}
 
-	FILE *out;
-	out = fopen("output/test.csv", "w");
-	fprintf(
-	    out,
-	    "zealot?,conformist?,how many neighbour vaccinate?,decision? \n");
-	fclose(out);
-
-	FILE *output;
-	output = fopen("output/test.csv", "a+");
+	fprintf(output, "As a result of %d times SIR simulations, \n", NAVG);
+	for (i = 0; i < g.n; i++){
+	    fprintf(output, "%d's trait:", i);
+	    if(n[i].is_zealot){
+	        fprintf(output, "zealot");
+	    }
+	    else if(n[i].is_conformist){
+	        fprintf(output, "conformist");
+	    } else{
+	        fprintf(output, "strategist");
+	    }
+	    fprintf(output, ", immunity:%d, payoff:%f \n",  n[i].immunity, n[i].payoff);
+	}
+	//fprintf(output, "-----------\n");
 
 	// fprintf(output, "P_imitate, P_conform, P \n");
 
@@ -221,10 +241,19 @@ int main(int argc, char *argv[]) {
 		st1 = 0.0, ss1 = 0.0;
 		// st2 = 0.0, ss2 = 0.0;
 		// The file output is for a debugging purpose
+		fprintf(output, "-------------\n");
+		fprintf(output, "This is season %d \n",i);
+		fprintf(output, "First, agents make strategies "
+                  "depending upon their traits and neighbours' strategy\n\n");
+
 		make_strategy(output);
 
+        fprintf(output, "~~~~~~~~~~\n");
+
+        fprintf(output, "Strategy-making done. Next, run simulations \nand calculate expected payoffs\n\n");
+
 		for (j = 0; j < NAVG; j++) {
-			sir();
+			sir(output);
 			ss1 += (double)g.s;
 			// ss2 += SQ((double) g.s);
 			st1 += g.t;
@@ -239,8 +268,42 @@ int main(int argc, char *argv[]) {
 		// printf("avg. outbreak size: %g \n", ss1);
 		// printf("avg. time to extinction: %g \n", st1);
 
-		for (j = 0; j < g.n; j++)
-			n[j].payoff = n[j].payoff / (float)NAVG;
+		for (j = 0; j < g.n; j++) {
+		    if(n[j].immunity != 1) {
+                n[j].payoff = n[j].payoff / (float) NAVG;
+            }
+        }
+
+        fprintf(output, "As a result of %d times SIR simulations, \n", NAVG);
+        for (j = 0; j < g.n; j++){
+            fprintf(output, "Agent %d's ", j);
+            /*
+            if(n[j].is_zealot){
+                fprintf(output, "zealot");
+            }
+            else if(n[j].is_conformist){
+                fprintf(output, "conformist");
+            } else{
+                fprintf(output, "strategist");
+            }*/
+            fprintf(output, "immunity:%d, (avg)payoff:%f \n",  n[j].immunity, n[j].payoff);
+        }
+
+		/*
+		for (j = 0; j < g.n; j++){
+            fprintf(output, "%d's trait:", j);
+            if(n[j].is_zealot){
+                fprintf(output, "zealot");
+            }
+            else if(n[j].is_conformist){
+                fprintf(output, "conformist");
+            } else{
+                fprintf(output, "strategist");
+            }
+            fprintf(output, ", immunity:%d, payoff:%f \n",  n[j].immunity, n[j].payoff);
+        }
+        fprintf(output, "-----------\n");
+        */
 	}
 	fclose(output);
 
