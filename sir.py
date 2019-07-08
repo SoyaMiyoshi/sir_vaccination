@@ -1,30 +1,27 @@
 import networkx as nx
 import subprocess
 import csv
-from multiprocessing import Pool
+import os
+from random import *
 
-nrep = 1  # how many networks to average over
+nrep = 10  # how many networks to average over
 nwk_size = 1000
-num_edges = 4 * nwk_size
-seasons = 100  # defined in C file
+num_edges = 2 * nwk_size
+seasons = 100     # defined in C file
 
 fname = ".tmp_nwkfile"
 
 # "usage: ./sir 1[nwk file] 2[beta] 3[initial coverage] \n"
 # "4[cost of vaccination] 5[fraction of conformist] 6[fraction of zealot] <seed>\n"
 
-
-def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot):
+def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, variable):
 
     outbreak_avg = [0 for i in range(seasons)]
     time_to_extn_avg = [0 for i in range(seasons)]
-    coverage_avg = [
-        0 for i in range(seasons)
-    ]  # this range is equal to # of seasons + 1
+    coverage_avg = [0 for i in range(seasons)]
     time = [i for i in range(seasons)]
 
     for rep in range(nrep):
-
         G = nx.gnm_random_graph(nwk_size, num_edges)  # generate network
         nx.write_edgelist(G, fname, data=False)
 
@@ -40,11 +37,17 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot):
             + str(frac_conf)
             + " "
             + str(frac_zealot)
+            + " "
+            + variable
+            + " "
+            + str(getrandbits(64))
         )
 
         # out = subprocess.getoutput("./sir .tmp_nwkfile 2 0.8 2 0.4 0.1 0.2 0.9")
         out = subprocess.getoutput(command)
-        # print(out)
+        print(out)
+
+        print("----------------------")
 
         i = 0
         for j in out.split("\n"):
@@ -58,20 +61,42 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot):
     time_to_extn_avg = [float(i) / nrep for i in time_to_extn_avg]
     coverage_avg = [float(i) / nrep for i in coverage_avg]
 
-    file_name = (
-        "output1/"
-        + "B="
-        + str(beta)
-        + "Cov="
-        + str(coverage)
-        + "VC="
-        + str(vac_cost)
-        + "conf="
-        + str(frac_conf)
-        + "z="
-        + str(frac_zealot)
-        + ".csv"
-    )
+    dir_name = "output/"
+    variable_name_and_value = ""
+
+    if variable != 'b':
+        dir_name += "b=" + str(beta) + ":"
+    if variable == 'b':
+        variable_name_and_value = "b=" + str(beta)
+
+    if variable != 'c':
+        dir_name += "c=" + str(coverage) + ":"
+    if variable == 'c':
+        variable_name_and_value = "c=" + str(coverage)
+
+    if variable != 'v':
+        dir_name += "v=" + str(vac_cost) + ":"
+    if variable == 'v':
+        variable_name_and_value = "v=" + str(vac_cost)
+
+    if variable != 'cf':
+        dir_name += "cf=" + str(frac_conf) + ":"
+    if variable == 'cf':
+        variable_name_and_value = "cf=" + str(frac_conf)
+
+    if variable != 'zf':
+        dir_name += "zf=" + str(frac_zealot) + ":"
+    if variable == 'zf':
+        variable_name_and_value = "zf=" + str(frac_zealots)
+
+    file_name = dir_name + "/" + variable_name_and_value + ".csv"
+
+    try:
+        # Create target Directory
+        os.mkdir(dir_name)
+        print("Directory ", dir_name, " Created ")
+    except FileExistsError:
+        print("Directory ", dir_name, " already exists")
 
     try:
         with open(file_name, "w") as csvfile:
@@ -83,8 +108,9 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot):
             rows = zip(time, outbreak_avg, time_to_extn_avg, coverage_avg)
             i = 0
             for row in rows:
-                if i != 0:
-                    writer.writerow(row)
+                #if i != 0:
+                #    writer.writerow(row)
+                writer.writerow(row)
                 i += 1
             csvfile.close()
 
@@ -93,29 +119,15 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot):
         return 1
 
 
-# "usage: ./sir 1[nwk file] 2[beta] 3[initial coverage] \n"
-# "4[cost of vaccination] 5[fraction of conformist] 6[fraction of zealot] <seed>\n"
-
-betas = [4.0]  # beta values to test
+betas = [1.2]  # beta values to test
 coverages = [0.9]
-vac_costs = [0.6]  # btwn 0 to 1 (cost of falling illness is set to 1)
+vac_costs = [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]  # btwn 0 to 1 (cost of falling illness is set to 1)
 frac_confs = [0.1]
-frac_zealots = [0.4, 0.45, 0.5, 0.55]
-
-input_list = []
+frac_zealots = [0.0]
 
 for beta in betas:
     for coverage in coverages:
         for vac_cost in vac_costs:
             for frac_conf in frac_confs:
                 for frac_zealot in frac_zealots:
-                    input_list.append(
-                        (beta, coverage, vac_cost, frac_conf, frac_zealot)
-                    )
-
-print(input_list)
-
-from multiprocessing import Pool
-
-p = Pool(4)
-p.starmap(run_simulation, input_list)
+                    run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, "v")
