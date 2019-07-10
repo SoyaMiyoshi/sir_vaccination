@@ -64,6 +64,8 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, variable):
     dir_name = "output/"
     variable_name_and_value = ""
 
+
+
     if variable != 'b':
         dir_name += "b=" + str(beta) + ":"
     if variable == 'b':
@@ -119,10 +121,10 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, variable):
         return 1
 
 
-betas = [1.2]  # beta values to test
-coverages = [0.9]
-vac_costs = [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95]  # btwn 0 to 1 (cost of falling illness is set to 1)
-frac_confs = [0.1]
+betas = [2.0]  # beta values to test
+coverages = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+vac_costs = [0.8]  # btwn 0 to 1 (cost of falling illness is set to 1)
+frac_confs = [0.4]
 frac_zealots = [0.0]
 
 for beta in betas:
@@ -130,4 +132,4 @@ for beta in betas:
         for vac_cost in vac_costs:
             for frac_conf in frac_confs:
                 for frac_zealot in frac_zealots:
-                    run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, "v")
+                    run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, "c")
