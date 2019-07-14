@@ -45,7 +45,7 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, variable):
 
         # out = subprocess.getoutput("./sir .tmp_nwkfile 2 0.8 2 0.4 0.1 0.2 0.9")
         out = subprocess.getoutput(command)
-        print(out)
+        # print(out)
 
         print("----------------------")
 
@@ -61,9 +61,8 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, variable):
     time_to_extn_avg = [float(i) / nrep for i in time_to_extn_avg]
     coverage_avg = [float(i) / nrep for i in coverage_avg]
 
-    dir_name = "output/"
+    dir_name = "output_mutation=0.1/"
     variable_name_and_value = ""
-
 
 
     if variable != 'b':
@@ -121,7 +120,7 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, variable):
         return 1
 
 
-betas = [2.0]  # beta values to test
+betas = [1.1]  # beta values to test
 coverages = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 vac_costs = [0.8]  # btwn 0 to 1 (cost of falling illness is set to 1)
 frac_confs = [0.4]

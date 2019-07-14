@@ -66,10 +66,11 @@ void make_strategy(FILE *logfile) {
 
                 if (n[me].deg + 1 != 2 * count) {
                     fprintf(logfile,
-                        "Majority is %d so he will do %d\n\n",
+                        "Majority is %d so um, he will do %d\n\n",
                         n[me].deg + 1 < 2 * count,
                         n[me].decision);
 				}
+
 			}
 
 			else {
@@ -111,6 +112,13 @@ void make_strategy(FILE *logfile) {
 					successful, n[successful].immunity);
 			}
 		}
+
+		 // Mutation at a low likelihood
+		 if (GetRandomInt(0.1)) {
+                fprintf(logfile, "He is %d, before mutation: %d \n", me, n[me].decision);
+                n[me].decision = !n[me].decision;
+                fprintf(logfile, "He is %d, after mutation: %d \n", me, n[me].decision);
+		 }
 	}
 
 	float covrg_each = 0.0;
