@@ -88,7 +88,7 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, variable):
     if variable != 'zf':
         dir_name += "zf=" + str(frac_zealot) + ":"
     if variable == 'zf':
-        variable_name_and_value = "zf=" + str(frac_zealots)
+        variable_name_and_value = "zf=" + str(frac_zealot)
 
     file_name = dir_name + "/" + variable_name_and_value + ".csv"
 
@@ -121,14 +121,14 @@ def run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, variable):
 
 
 betas = [1.1]  # beta values to test
-coverages = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+coverages = [0.9]
 vac_costs = [0.8]  # btwn 0 to 1 (cost of falling illness is set to 1)
 frac_confs = [0.4]
-frac_zealots = [0.0]
+frac_zealots = [0.0, 0.1, 0.2, 0.3]
 
 for beta in betas:
     for coverage in coverages:
         for vac_cost in vac_costs:
             for frac_conf in frac_confs:
                 for frac_zealot in frac_zealots:
-                    run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, "c")
+                    run_simulation(beta, coverage, vac_cost, frac_conf, frac_zealot, "zf")

@@ -120,10 +120,11 @@ void make_strategy(FILE *logfile) {
 		}
 
 		 // Mutation at a low likelihood
+
 		 if (GetRandomInt(0.1)) {
-                fprintf(logfile, "He is %d, before mutation: %d \n", me, n[me].decision);
+                //fprintf(logfile, "He is %d, before mutation: %d \n", me, n[me].decision);
                 n[me].decision = !n[me].decision;
-                fprintf(logfile, "He is %d, after mutation: %d \n", me, n[me].decision);
+                //fprintf(logfile, "He is %d, after mutation: %d \n", me, n[me].decision);
 		 }
 	}
 
@@ -139,9 +140,10 @@ void make_strategy(FILE *logfile) {
 			covrg_each += 1.0;
 		}
 		n[me].ninf = 0;
+		/*
 		fprintf(logfile,
 			"I am %d and I will get vaccination next year? > %d\n",
-			me, n[me].immunity);
+			me, n[me].immunity);*/
 	}
 	g.coverage = covrg_each / g.n;
 }
