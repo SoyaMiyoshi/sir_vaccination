@@ -44,10 +44,12 @@ void make_strategy(FILE *logfile) {
 					n[me].decision = 1;
 				}
 
+                /*
 				fprintf(logfile,
 					"%d is a conformist whose decision was "
 					"%d\n",
 					me, n[me].immunity);
+
 				for (unsigned int i = 0; i < n[me].deg; i++) {
 					you = n[me].nb[i];
 					fprintf(logfile,
@@ -70,6 +72,7 @@ void make_strategy(FILE *logfile) {
                         n[me].deg + 1 < 2 * count,
                         n[me].decision);
 				}
+				*/
 
 			}
 
@@ -92,6 +95,8 @@ void make_strategy(FILE *logfile) {
 				// the best-performing neighbour
 				n[me].decision = n[successful].immunity;
 
+				/*
+
 				fprintf(logfile,
 					"%d is a strategist whose decision was "
 					"%d \n",
@@ -110,6 +115,7 @@ void make_strategy(FILE *logfile) {
 					"Successful nb is %d whose strategy is "
 					"%d \n\n",
 					successful, n[successful].immunity);
+				*/
 			}
 		}
 

@@ -277,6 +277,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  /*
   fprintf(logfile, "As a result of %d times SIR simulations, \n", NAVG);
   for (i = 0; i < g.n; i++) {
     fprintf(logfile, "%d's trait:", i);
@@ -288,24 +289,30 @@ int main(int argc, char *argv[]) {
       fprintf(logfile, "strategist");
     }
     fprintf(logfile, ", immunity:%d, payoff:%f, prob_infection %f\n", n[i].immunity, n[i].payoff, n[i].ninf / (float)NAVG );
-  }
+  }*/
 
   // from second seasons, each agent chooses his strategy wisely
   for (i = 1; i < SEASONS; i++) {
     st1 = 0.0, ss1 = 0.0;
     // st2 = 0.0, ss2 = 0.0;
     // The file logfile is for a debugging purpose
+
+    /*
     fprintf(logfile, "-------------\n");
     fprintf(logfile, "This is season %d \n", i);
     fprintf(logfile, "First, agents make strategies "
                     "depending upon their traits and neighbours' strategy\n\n");
+     */
 
     make_strategy(logfile);
+
+    /*
 
     fprintf(logfile, "~~~~~~~~~~\n");
 
     fprintf(logfile, "Strategy-making done. Next, run simulations \nand "
                     "calculate expected payoffs\n\n");
+    */
 
     for (j = 0; j < NAVG; j++) {
       sir(logfile);
@@ -329,12 +336,13 @@ int main(int argc, char *argv[]) {
       }
     }
 
+    /*
     fprintf(logfile, "As a result of %d times SIR simulations, \n", NAVG);
     for (j = 0; j < g.n; j++) {
       fprintf(logfile, "Agent %d's ", j);
       fprintf(logfile, "immunity:%d, (avg)payoff:%f, prob_infection %f \n", n[j].immunity,
               n[j].payoff, n[j].ninf / (float)NAVG);
-    }
+    }*/
   }
   fclose(logfile);
 
