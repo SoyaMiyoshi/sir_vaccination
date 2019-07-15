@@ -44,6 +44,7 @@ void make_strategy(FILE *logfile) {
 					n[me].decision = 1;
 				}
 
+                /*
 				fprintf(logfile,
 					"%d is a conformist whose decision was "
 					"%d\n",
@@ -69,7 +70,8 @@ void make_strategy(FILE *logfile) {
                         "Majority is %d so he will do %d\n\n",
                         n[me].deg + 1 < 2 * count,
                         n[me].decision);
-				}
+				}*/
+
 			}
 
 			else {
@@ -91,6 +93,7 @@ void make_strategy(FILE *logfile) {
 				// the best-performing neighbour
 				n[me].decision = n[successful].immunity;
 
+                /*
 				fprintf(logfile,
 					"%d is a strategist whose decision was "
 					"%d \n",
@@ -104,11 +107,12 @@ void make_strategy(FILE *logfile) {
 						"is %f \n",
 						n[me].nb[i], n[you].payoff);
 				}
-
 				fprintf(logfile,
 					"Successful nb is %d whose strategy is "
 					"%d \n\n",
 					successful, n[successful].immunity);
+				*/
+
 			}
 		}
 	}
@@ -125,9 +129,10 @@ void make_strategy(FILE *logfile) {
 			covrg_each += 1.0;
 		}
 		n[me].ninf = 0;
+		/*
 		fprintf(logfile,
 			"I am %d and I will get vaccination next year? > %d\n",
-			me, n[me].immunity);
+			me, n[me].immunity);*/
 	}
 	g.coverage = covrg_each / g.n;
 }
