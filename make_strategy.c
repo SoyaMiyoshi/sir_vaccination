@@ -134,5 +134,6 @@ void make_strategy(FILE *logfile) {
 			"I am %d and I will get vaccination next year? > %d\n",
 			me, n[me].immunity);*/
 	}
+	//fprintf(logfile,"covrg_each = %f\n", covrg_each);
 	g.coverage = covrg_each / g.n;
 }

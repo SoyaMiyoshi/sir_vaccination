@@ -22,3 +22,4 @@ sir_deep_directory.py
 log
 output
 output_mutation=0.1
+output_master
