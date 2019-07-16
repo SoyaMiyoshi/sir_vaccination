@@ -18,3 +18,8 @@ input.txt
 output*
 sir.py
 sir_deep_directory.py
+.ipynb_checkpoints
+.mypy_cache
+log
+output
+output_mutation=0.1
