@@ -302,10 +302,12 @@ int main(int argc, char *argv[]) {
     fprintf(logfile, "First, agents make strategies "
                     "depending upon their traits and neighbours' strategy\n\n");
 
+    */
+
     make_strategy(logfile);
 
+    /*
     fprintf(logfile, "~~~~~~~~~~\n");
-
     fprintf(logfile, "Strategy-making done. Next, run simulations \nand "
                     "calculate expected payoffs\n\n");
     */
@@ -338,8 +340,8 @@ int main(int argc, char *argv[]) {
       fprintf(logfile, "Agent %d's ", j);
       fprintf(logfile, "immunity:%d, (avg)payoff:%f, prob_infection %f \n", n[j].immunity,
               n[j].payoff, n[j].ninf / (float)NAVG);
-    }
-  }*/
+    }*/
+  }
 
   fclose(logfile);
 
