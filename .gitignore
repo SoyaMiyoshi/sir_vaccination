@@ -23,3 +23,4 @@ log
 output
 output_mutation=0.1
 output_master
+jupyter
