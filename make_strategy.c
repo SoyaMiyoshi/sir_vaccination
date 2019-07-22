@@ -96,7 +96,6 @@ void make_strategy(FILE *logfile) {
 				n[me].decision = n[successful].immunity;
 
 				/*
-
 				fprintf(logfile,
 					"%d is a strategist whose decision was "
 					"%d \n",
@@ -119,9 +118,8 @@ void make_strategy(FILE *logfile) {
 			}
 		}
 
-		 // Mutation at a low likelihood
-
-		 if (GetRandomInt(0.1)) {
+		 // Mutation at a low probability
+		 if (GetRandomInt(0.01)) {
                 //fprintf(logfile, "He is %d, before mutation: %d \n", me, n[me].decision);
                 n[me].decision = !n[me].decision;
                 //fprintf(logfile, "He is %d, after mutation: %d \n", me, n[me].decision);

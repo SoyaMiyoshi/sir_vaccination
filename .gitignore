@@ -15,8 +15,10 @@ input.txt
 /output
 ./output
 output*
+*.py
 sir.py
 sir_deep_directory.py
+sir_printpay
 log
 .ipynb_checkpoints
 .mypy_cache
