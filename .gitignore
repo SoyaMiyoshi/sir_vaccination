@@ -15,12 +15,11 @@ input.txt
 /output
 ./output
 output*
+*.py
 sir.py
 sir_deep_directory.py
+sir_printpay
+log
 .ipynb_checkpoints
 .mypy_cache
-log
-output
-output_mutation=0.1
-output_master
 jupyter
