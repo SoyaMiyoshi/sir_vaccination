@@ -23,3 +23,5 @@ log
 .ipynb_checkpoints
 .mypy_cache
 jupyter
+*.html
+report
