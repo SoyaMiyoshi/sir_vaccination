@@ -46,6 +46,19 @@ typedef struct GLOBALS {
 	unsigned int numCf;
 	unsigned int numImt;
 
+	double st1, ss1;
+    double st2, ss2; 
+
+	float pfAllAvg;
+	float pfZlAvg;
+	float pfConfAvg;
+	float pfImtAvg;
+
+	float pfAllSqdAvg;
+	float pfZlSqdAvg;
+	float pfConfSqdAvg;
+	float pfImtSqdAvg;
+
 	float t;
 	// FOR RNG
 	uint64_t state;

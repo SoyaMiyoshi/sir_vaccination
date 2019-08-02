@@ -16,11 +16,15 @@
 GLOBALS g;
 NODE *n;
 
-void printResult(double ss1, double ss2, double st1, double st2, float coverage) {
+void printResult(float coverage) {
   
-  printf("%g %g ", ss1, sqrt((ss2 - SQ(ss1)) / (NAVG - 1))); // outbreaksize (avg, stderr)
-	printf("%g %g ", st1, sqrt((st2 - SQ(st1)) / (NAVG - 1))); // time to extinction (avg, stderr)
-  printf("%f", coverage);
+  printf("%g %g ", g.ss1, sqrt((g.ss2 - SQ(g.ss1)) / (NAVG - 1))); // outbreaksize (avg, stderr)
+	printf("%g %g ", g.st1, sqrt((g.st2 - SQ(g.st1)) / (NAVG - 1))); // time to extinction (avg, stderr)
+  printf("%g %g ", g.pfAllAvg, sqrt((g.pfAllSqdAvg - SQ(g.pfAllAvg)) / (NAVG - 1)));
+  printf("%g %g ", g.pfZlAvg, sqrt((g.pfZlSqdAvg - SQ(g.pfZlAvg)) / (NAVG - 1)));
+  printf("%g %g ", g.pfConfAvg, sqrt((g.pfConfSqdAvg - SQ(g.pfConfAvg)) / (NAVG - 1)));
+  printf("%g %g ", g.pfImtAvg, sqrt((g.pfImtSqdAvg - SQ(g.pfImtAvg)) / (NAVG - 1)));
+  printf("%f \n", coverage);
 
 }
 
@@ -111,8 +115,8 @@ void setCharacteristics(){
       }
       n[j].immunity = GetRandomInt(g.coverage);
       if (n[j].immunity == 1) {
-        n[j].payoff += -g.vac_cost;
-        n[j].payoff_each += -g.vac_cost;
+        n[j].payoff = -g.vac_cost;
+        n[j].payoff_each = -g.vac_cost;
       }
     }
   }
@@ -196,67 +200,99 @@ void infect(FILE *logfile) {
           g.heap[++g.nheap] = you;
           n[you].heap = g.nheap;
           n[you].payoff = n[you].payoff - 1.0;
-          n[you].payoff_each += -1;
+          n[you].payoff_each = n[you].payoff_each - 1.0;
           n[you].ninf++;
-          // fprintf(logfile, "oops, node %d get infected!\n", you);
+          //fprintf(logfile, "oops, node %d get infected from %d\n", you, me);
         }
-        up_heap(n[you].heap); // this works bcoz the only
-                              // heap relationship that can
-                              // be violated is the one
-                              // between you and its parent
+        up_heap(n[you].heap); 
       }
     }
   }
 }
 
 void sir(FILE *logfile) {
-  unsigned int i, source = 0;
+  unsigned int i, source_temp = 0;
+  int source = -1;
 
   g.t = 0.0;
   g.s = 0;
 
-  // initialize
   for (i = 0; i < g.n; i++) {
     n[i].heap = NONE;
     n[i].time = DBL_MAX; // to a large value
   }
-
-  // get & infect the source
-  for (i = 0; i < g.n; i++) {
-    source = pcg_32_bounded(g.n);
-    if (n[source].immunity != 1) {
+  
+  source_temp = pcg_32_bounded(g.n);
+  if (n[source_temp].immunity != 1) {
+      source = source_temp;
       n[source].payoff = n[source].payoff - 1;
+      n[source].payoff_each = n[source].payoff_each - 1;
       n[source].ninf ++;
-      //fprintf(logfile, "source is %d \n", source);
-      break;
-    }
-    if (i == g.n)
-      break;
   }
 
-  n[source].time = 0.0;
-  n[source].heap = 1;
-  g.heap[g.nheap = 1] = source;
+  // fprintf(logfile, "source is %d \n", source);
 
-  // run the outbreak
+  if(source != -1){
+    n[source].time = 0.0;
+    n[source].heap = 1;
+    g.heap[g.nheap = 1] = source;
+  }
+
+  else{
+    //fprintf(logfile, "No source found\n");
+  }
+
   while (g.nheap)
     infect(logfile);
 }
 
+void runSimulation(FILE *logfile){
+  float pfAllAvg_temp = 0.0;
+  float pfImtAvg_temp = 0.0;
+  float pfConfAvg_temp = 0.0;
+  float pfZlAvg_temp = 0.0;
+
+    sir(logfile);
+    g.ss1 += (double)g.s;
+    g.ss2 += SQ((double) g.s); // stderr を計算するため
+    g.st1 += g.t;
+    g.st2 += SQ(g.t);
+
+    for (unsigned int ind = 0; ind < g.n; ind++) {
+
+      pfAllAvg_temp += n[ind].payoff_each;
+
+      if (n[ind].is_zealot) {
+        pfZlAvg_temp += n[ind].payoff_each;
+      } else {
+      if (n[ind].is_conformist) {
+        pfConfAvg_temp += n[ind].payoff_each;
+      } else {
+        pfImtAvg_temp += n[ind].payoff_each;
+            } 
+          } 
+      
+      /* fprintf(logfile, "I am %d, immu? %d, Z? %d, Conf? %d, Pay_ec %f Pay_tot %f \n",
+        ind, n[ind].immunity, n[ind].is_zealot, n[ind].is_conformist, n[ind].payoff_each, n[ind].payoff);*/
+    
+      if(n[ind].immunity == 0){
+        n[ind].payoff_each = 0;
+        }
+      //fprintf(logfile, "I am %d, Conf? %d, Payoff_each %f \n", l, n[l].is_conformist, n[l].payoff_each);
+    }
+
+    g.pfAllAvg += pfAllAvg_temp/g.n;
+    g.pfZlAvg += pfZlAvg_temp/g.numZl;
+    g.pfConfAvg += pfConfAvg_temp/g.numCf;
+    g.pfImtAvg += pfImtAvg_temp/g.numImt;
+    
+    g.pfAllSqdAvg += SQ(pfAllAvg_temp/g.n);
+    g.pfZlSqdAvg += SQ(pfZlAvg_temp/g.numZl);
+    g.pfConfSqdAvg += SQ(pfConfAvg_temp/g.numCf);
+    g.pfImtSqdAvg += SQ(pfImtAvg_temp/g.numImt);
+}
+
 int main(int argc, char *argv[]) {
-  unsigned int i, j;
-  double st1 = 0.0, ss1 = 0.0;
-  double st2 = 0.0, ss2 = 0.0; // for averages
-
-  float payoffAllAvg = 0.0, payoffAllSqdAvg = 0.0;
-  float payoffImtAvg = 0.0, payoffImtSqdAvg = 0.0;
-  float payoffConfAvg = 0.0, payoffConfSqdAvg = 0.0;
-  float payoffZlAvg = 0.0, payoffZlSqdAvg = 0.0;
-
-  float payoffAllAvg_temp = 0.0;
-  float payoffImtAvg_temp = 0.0;
-  float payoffConfAvg_temp = 0.0;
-  float payoffZlAvg_temp = 0.0;
 
   setGlobals(argc, argv);
   
@@ -268,104 +304,59 @@ int main(int argc, char *argv[]) {
 
   FILE *logfile;
   logfile = fopen(log_filename, "w");
- 
-  for (int k = 0; k < NAVG; k++) {
-    sir(logfile);
-    ss1 += (double)g.s;
-    ss2 += SQ((double) g.s); // stderr を計算するため
-    st1 += g.t;
-    st2 += SQ(g.t);
 
-    for (i = 0; i < g.n; i++) {
+  for(int run = 0; run < SEASONS + 1; run++){
+    g.ss1 = 0;
+    g.ss2 = 0;
+    g.st1 = 0;
+    g.st2 = 0;  // for averages
 
-      payoffAllAvg_temp += n[i].payoff_each;
+    g.pfAllAvg = 0;
+    g.pfAllSqdAvg = 0;
+    g.pfImtAvg = 0;
+    g.pfImtSqdAvg = 0;
+    g.pfConfAvg = 0;
+    g.pfConfSqdAvg = 0;
+    g.pfZlAvg = 0;
+    g.pfZlSqdAvg = 0;
 
-      for (i = 0; i < g.n; i++) {
-      if (n[i].is_zealot) {
-        payoffZlAvg_temp += n[i].payoff_each;
-      } else {
-      if (n[i].is_conformist) {
-        payoffConfAvg_temp += n[i].payoff_each;
-      } else {
-        payoffImtAvg_temp += n[i].payoff_each;
-            } 
-          } 
-      if(n[i].immunity == 0){
-        payoff_each = 0;
-        }
+    for (int k = 0; k < NAVG; k++) {
+      // fprintf(logfile, "~~~~~~~ Season %d, Sim %d th ~~~~~~~ \n", run, k);
+      runSimulation(logfile);
+    }
+
+    for (unsigned int ind = 0; ind < g.n; ind++) {
+      if (n[ind].immunity != 1) {
+        n[ind].payoff = n[ind].payoff / (float)NAVG;
       }
-
     }
 
-    payoffAllAvg += payoffAllAvg_temp/g.n;
-    payoffZlAvg += payoffZlAvg_temp/g.numZl;
-    payoffConfAvg += payoffConfAvg_temp/g.numCf;
-    payoffImtAvg += payoffImtAvg_temp/g.numImt;
-    
-    payoffAllSqdAvg += SQ(payoffAllAvg_temp/g.n);
-    payoffZlSqdAvg += SQ(payoffZlAvg_temp/g.numZl);
-    payoffConfSqdAvg += SQ(payoffConfAvg_temp/g.numCf);
-    payoffImtSqdAvg += SQ(payoffImtAvg_temp/g.numImt);
-  }
+    g.ss1 /= NAVG;
+    g.ss2 /= NAVG;
+    g.st1 /= NAVG;
+    g.st2 /= NAVG;
 
-  for (i = 0; i < g.n; i++) {
-    if (n[i].immunity != 1) {
-      n[i].payoff = n[i].payoff / (float)NAVG;
+    g.pfAllAvg /= NAVG;
+    g.pfZlAvg /= NAVG;
+    g.pfConfAvg /= NAVG;
+    g.pfImtAvg /= NAVG;
+    g.pfAllSqdAvg /= NAVG;
+    g.pfZlSqdAvg /= NAVG;
+    g.pfConfSqdAvg /= NAVG;
+    g.pfImtSqdAvg /= NAVG;
+
+    if(run == 0){
+      printResult(g.coverage * (1 - g.zealot_fraction));
     }
-  }
-
-  ss1 /= NAVG;
-  ss2 /= NAVG;
-  st1 /= NAVG;
-  st2 /= NAVG;
-
-  payoffAllAvg /= NAVG;
-  payoffZlAvg /= NAVG;
-  payoffConfAvg /= NAVG;
-  payoffImtAvg /= NAVG;
-  
-  payoffAllSqdAvg /= NAVG;
-  payoffZlSqdAvg /= NAVG;
-  payoffConfSqdAvg /= NAVG;
-  payoffImtSqdAvg /= NAVG;
-
-  // User-entered "coverage" is "coverage excluding zealot"
-
-  printf("%f %f\n", payoffAllAvg, SQ( (payoffAllSqdAvg - SQ(payoffAllAvg))/ (NAVG - 1) ));
-
-  // printResult(ss1, ss2, st1, st2, g.coverage * (1 - g.zealot_fraction) );
-
-  // from second seasons, each agent chooses his strategy wisely
-  for (i = 1; i < SEASONS; i++) {
-    st1 = 0.0, ss1 = 0.0;
-    st2 = 0.0, ss2 = 0.0;
-
+    else{
+      printResult(g.coverage);
+    }
     make_strategy(logfile);
-
-    for (j = 0; j < NAVG; j++) {
-      sir(logfile);
-      ss1 += (double)g.s;
-      ss2 += SQ((double) g.s);
-      st1 += g.t;
-      st2 += SQ(g.t);
-    }
-    ss1 /= NAVG;
-    ss2 /= NAVG;
-    st1 /= NAVG;
-    st2 /= NAVG;
-
-    for (j = 0; j < g.n; j++) {
-      if (n[j].immunity != 1) {
-        n[j].payoff = n[j].payoff / (float)NAVG;
-      }
-    }
-
-    //printResult(ss1, ss2, st1, st2, g.coverage);
-
   }
+
   fclose(logfile);
 
-  for (i = 0; i < g.n; i++) free(n[i].nb);
+  for (unsigned int re = 0; re < g.n; re++) free(n[re].nb);
   free(n);
   free(g.heap);
 
