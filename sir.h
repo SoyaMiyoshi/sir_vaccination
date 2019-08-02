@@ -42,6 +42,23 @@ typedef struct GLOBALS {
 	float conformist_fraction;  // argv[5]
 	float zealot_fraction;      // argv[6]
 
+	unsigned int numZl;
+	unsigned int numCf;
+	unsigned int numImt;
+
+	double st1, ss1;
+    double st2, ss2; 
+
+	float pfAllAvg;
+	float pfZlAvg;
+	float pfConfAvg;
+	float pfImtAvg;
+
+	float pfAllSqdAvg;
+	float pfZlSqdAvg;
+	float pfConfSqdAvg;
+	float pfImtSqdAvg;
+
 	float t;
 	// FOR RNG
 	uint64_t state;
@@ -56,6 +73,7 @@ typedef struct NODE {
 	unsigned int immunity;
 	unsigned int decision;
 	float payoff;
+	float payoff_each;
 	float time;
 
 	unsigned int is_zealot;

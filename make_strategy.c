@@ -119,11 +119,12 @@ void make_strategy(FILE *logfile) {
 		}
 
 		 // Mutation at a low probability
-		 if (GetRandomInt(0.01)) {
+		if (GetRandomInt(0.01)) {
                 //fprintf(logfile, "He is %d, before mutation: %d \n", me, n[me].decision);
                 n[me].decision = !n[me].decision;
+				fprintf(logfile, "Node %d mutated! \n", me);
                 //fprintf(logfile, "He is %d, after mutation: %d \n", me, n[me].decision);
-		 }
+		}
 	}
 
 	float covrg_each = 0.0;
@@ -134,8 +135,12 @@ void make_strategy(FILE *logfile) {
 		n[me].payoff = 0;
 		n[me].ninf = 0;
 		if (n[me].immunity == 1) {
-			n[me].payoff += -g.vac_cost;
+			n[me].payoff = -g.vac_cost;
+			n[me].payoff_each = -g.vac_cost;
 			covrg_each += 1.0;
+		}
+		else {
+			n[me].payoff_each = 0;
 		}
 		n[me].ninf = 0;
 		/*
