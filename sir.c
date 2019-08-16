@@ -34,10 +34,10 @@ void setGlobals(int argc, char *argv[]){
   // a help message
   if ((argc < 8) || (argc > 9)) {
     fprintf(stderr, "usage: ./sir 1[nwk file] 2[beta] 3[initial coverage] \n"
-                    "4[cost of vaccination] 5[fraction of conformist] "
-                    "6[fraction of zealot] 7[filename] <seed>\n"
-                    "Note that 3[initial coverage] and 5[fraction of "
-                    "conformist] refers to the fraction of the population that "
+                    "4[cost of vaccination] 5[proportion of conformist] "
+                    "6[proportion of zealot] 7[filename] <seed>\n"
+                    "Note that 3[initial coverage] and 5[proportion of "
+                    "conformist] refers to the proportion of the population that "
                     "belongs to each class\n"
                     "EXCLUDING the zealot.\n"
                     "For example, if 10 percent of the population is zealot, "
@@ -64,13 +64,13 @@ void setGlobals(int argc, char *argv[]){
     exit(1);
   }
 
-  g.conformist_fraction = atof(argv[5]);
+  g.conformist_proportion = atof(argv[5]);
   if (g.vac_cost < 0 || g.vac_cost > 1) {
     fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
     exit(1);
   }
 
-  g.zealot_fraction = atof(argv[6]);
+  g.zealot_proportion = atof(argv[6]);
   if (g.vac_cost < 0 || g.vac_cost > 1) {
     fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
     exit(1);
@@ -97,7 +97,7 @@ void setGlobals(int argc, char *argv[]){
 
 void setCharacteristics(){
     for (unsigned int j = 0; j < g.n; j++) {
-    n[j].is_zealot = GetRandomInt(g.zealot_fraction);
+    n[j].is_zealot = GetRandomInt(g.zealot_proportion);
 
     if (n[j].is_zealot == 1) {
       n[j].immunity = 0;
@@ -106,7 +106,7 @@ void setCharacteristics(){
     }
 
     if (n[j].is_zealot == 0) {
-      n[j].is_conformist = GetRandomInt(g.conformist_fraction);
+      n[j].is_conformist = GetRandomInt(g.conformist_proportion);
       if (n[j].is_conformist == 1){
         g.numCf++;
       }
@@ -139,8 +139,8 @@ void createDirAndFile(char *log_dirname, char *log_filename, char *argv[]){
   snprintf(bs, CHAR_LEN, "%2.2f\n", g.beta);
   snprintf(cs, CHAR_LEN, "%2.2f\n", g.coverage);
   snprintf(vs, CHAR_LEN, "%2.2f\n", g.vac_cost);
-  snprintf(cfs, CHAR_LEN, "%2.2f\n", g.conformist_fraction);
-  snprintf(zfs, CHAR_LEN, "%2.2f\n", g.zealot_fraction);
+  snprintf(cfs, CHAR_LEN, "%2.2f\n", g.conformist_proportion);
+  snprintf(zfs, CHAR_LEN, "%2.2f\n", g.zealot_proportion);
 
   if (strcmp(argv[7], b) == 0){
     //fprintf(stderr,"Vary Beta\n");
@@ -346,7 +346,7 @@ int main(int argc, char *argv[]) {
     g.pfImtSqdAvg /= NAVG;
 
     if(run == 0){
-      printResult(g.coverage * (1 - g.zealot_fraction));
+      printResult(g.coverage * (1 - g.zealot_proportion));
     }
     else{
       printResult(g.coverage);
