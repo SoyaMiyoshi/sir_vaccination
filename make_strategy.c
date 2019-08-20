@@ -5,7 +5,9 @@
 extern NODE *n;
 extern GLOBALS g;
 
-void make_strategy(FILE *logfile) {
+extern FILE *logfile;
+
+void make_strategy() {
 	unsigned int me, you;
 
 	// Rather than traversing all the n[i],
@@ -119,7 +121,7 @@ void make_strategy(FILE *logfile) {
 		}
 
 		 // Mutation at a low probability
-		if (GetRandomInt(0.01)) {
+		if (get_random_int(0.01)) {
                 //fprintf(logfile, "He is %d, before mutation: %d \n", me, n[me].decision);
                 n[me].decision = !n[me].decision;
 				fprintf(logfile, "Node %d mutated! \n", me);

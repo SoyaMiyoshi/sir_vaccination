@@ -82,13 +82,13 @@ uint16_t pcg_16 () {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-int GetRandomInt(float trsh){
+int get_random_int(float trsh){
     float my_rand = pcg_16()*(1.0)/(1.0+UINT16_MAX);
     if(my_rand < trsh) return 1;
     else return 0;
 }
 
-float GetRandomFloat(){
+float get_random_float(){
     float my_rand = pcg_16()*(1.0)/(1.0+UINT16_MAX);
     return my_rand;
 }
