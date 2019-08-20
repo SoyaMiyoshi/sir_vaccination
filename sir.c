@@ -298,12 +298,6 @@ void calculate_payoff_each_group() {
 	g.pfImtSqdAvg += SQ(pfImtAvg_temp / g.numImt);
 }
 
-void run_simulation() {
-	sir();
-	calculate_outbreaksize_and_timetoext();
-	calculate_payoff_each_group();
-}
-
 void reset_result_each_season() {
 	g.ss1 = 0;
 	g.ss2 = 0;
@@ -320,7 +314,7 @@ void reset_result_each_season() {
 	g.pfZlSqdAvg = 0;
 }
 
-void calculate_payff_for_each_agent() {
+void calculate_payff_each_agent() {
 	for (unsigned int ind = 0; ind < g.n; ind++) {
 		if (n[ind].immunity != 1) {
 			n[ind].payoff = n[ind].payoff / (float)NAVG;
@@ -380,10 +374,12 @@ int main(int argc, char *argv[]) {
 			fprintf(logfile,
 				"~~~~~~~ Season %d, Sim %d th ~~~~~~~ \n", run,
 				k);
-			run_simulation();
+				sir();
+				calculate_outbreaksize_and_timetoext();
+				calculate_payoff_each_group();
 		}
 
-		calculate_payff_for_each_agent();
+		calculate_payff_each_agent();
 
 		finalize_result_each_season();
 
