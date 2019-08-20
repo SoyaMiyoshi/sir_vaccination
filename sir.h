@@ -70,7 +70,7 @@ typedef struct NODE {
 	unsigned int deg, *nb;  // degree and network neighbors
 	unsigned int heap;
 	unsigned int ninf;  // number of infections
-	unsigned int immunity;
+	unsigned int immune;
 	unsigned int decision;
 	float payoff;
 	float payoff_each;

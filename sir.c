@@ -93,7 +93,7 @@ void set_characteristics() {
 		n[j].is_zealot = get_random_int(g.zealot_proportion);
 
 		if (n[j].is_zealot == 1) {
-			n[j].immunity = 0;
+			n[j].immune = 0;
 			n[j].decision = 0;
 			g.numZl++;
 		}
@@ -106,8 +106,8 @@ void set_characteristics() {
 			} else {
 				g.numImt++;
 			}
-			n[j].immunity = get_random_int(g.coverage);
-			if (n[j].immunity == 1) {
+			n[j].immune = get_random_int(g.coverage);
+			if (n[j].immune == 1) {
 				n[j].payoff = -g.vac_cost;
 				n[j].payoff_each = -g.vac_cost;
 			}
@@ -191,7 +191,7 @@ void infect() {
 		you = n[me].nb[i];
 
 		if (n[you].heap != I_OR_R &&
-		    n[you].immunity == 0) {  // if you is S, and not immune, you
+		    n[you].immune == 0) {  // if you is S, and not immune, you
 					     // can be infected.
 
 			t = now + g.rexp[pcg_16()];
@@ -230,7 +230,7 @@ void sir() {
 
 	source_temp = pcg_32_bounded(g.n);
 
-	if (n[source_temp].immunity) {
+	if (n[source_temp].immune) {
 		fprintf(logfile, "Chosen source is immune!\n");
 		return;
 	}
@@ -277,10 +277,10 @@ void calculate_payoff_each_group() {
 		}
 
 		/* fprintf(logfile, "I am %d, immu? %d, Z? %d, Conf? %d, Pay_ec
-		  %f Pay_tot %f \n", ind, n[ind].immunity, n[ind].is_zealot,
+		  %f Pay_tot %f \n", ind, n[ind].immune, n[ind].is_zealot,
 		  n[ind].is_conformist, n[ind].payoff_each, n[ind].payoff);*/
 
-		if (n[ind].immunity == 0) {
+		if (n[ind].immune == 0) {
 			n[ind].payoff_each = 0;
 		}
 		// fprintf(logfile, "I am %d, Conf? %d, Payoff_each %f \n", l,
@@ -316,7 +316,7 @@ void reset_result_each_season() {
 
 void calculate_payff_each_agent() {
 	for (unsigned int ind = 0; ind < g.n; ind++) {
-		if (n[ind].immunity != 1) {
+		if (n[ind].immune != 1) {
 			n[ind].payoff = n[ind].payoff / (float)NAVG;
 		}
 	}
