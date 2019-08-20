@@ -217,27 +217,25 @@ void infect() {
 }
 
 void sir() {
-	unsigned int i, source_temp = 0;
-	int source = -1;
+	unsigned int i, source = 0;
 
 	g.t = 0.0;
 	g.s = 0;
 
-	for (i = 0; i < g.n; i++) {
-		n[i].heap = NONE;
-		n[i].time = DBL_MAX;  // to a large value
-	}
+	source = pcg_32_bounded(g.n);
 
-	source_temp = pcg_32_bounded(g.n);
-
-	if (n[source_temp].immune) {
+	if (n[source].immune) {
 		fprintf(logfile, "Chosen source is immune!\n");
 		return;
 	}
 
 	else {
-		fprintf(logfile, "Chosen source %d\n", source_temp);
-		source = source_temp;
+		for (i = 0; i < g.n; i++) {
+		n[i].heap = NONE;
+		n[i].time = DBL_MAX;  // to a large value
+		}
+
+		fprintf(logfile, "Chosen source %d\n", source);
 		n[source].payoff = n[source].payoff - 1;
 		n[source].payoff_each = n[source].payoff_each - 1;
 		n[source].ninf++;
