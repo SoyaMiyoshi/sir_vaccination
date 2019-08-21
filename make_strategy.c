@@ -5,7 +5,9 @@
 extern NODE *n;
 extern GLOBALS g;
 
-void make_strategy(FILE *logfile) {
+extern FILE *logfile;
+
+void make_strategy() {
 	unsigned int me, you;
 
 	// Rather than traversing all the n[i],
@@ -17,7 +19,7 @@ void make_strategy(FILE *logfile) {
 				unsigned int count = 0;
 
 				// Include yourself
-				if (n[me].immunity == 1) {
+				if (n[me].immune == 1) {
 					count += 1;
 				}
 
@@ -25,7 +27,7 @@ void make_strategy(FILE *logfile) {
 				// who chose to vaccinate
 				for (unsigned int i = 0; i < n[me].deg; i++) {
 					you = n[me].nb[i];
-					if (n[you].immunity == 1) count++;
+					if (n[you].immune == 1) count++;
 				}
 
 				// If less than half of neighbours
@@ -36,7 +38,7 @@ void make_strategy(FILE *logfile) {
 
 				// If 5:5, then does not change the decision
 				if (n[me].deg + 1 == 2 * count) {
-					n[me].decision = n[me].immunity;
+					n[me].decision = n[me].immune;
 				}
 
 				// If more than half
@@ -48,14 +50,14 @@ void make_strategy(FILE *logfile) {
 				fprintf(logfile,
 					"%d is a conformist whose decision was "
 					"%d\n",
-					me, n[me].immunity);
+					me, n[me].immune);
 
 				for (unsigned int i = 0; i < n[me].deg; i++) {
 					you = n[me].nb[i];
 					fprintf(logfile,
 						"He knows node %d whose "
 						"decision was %d \n",
-						n[me].nb[i], n[you].immunity);
+						n[me].nb[i], n[you].immune);
 				}
 
 				if (n[me].deg + 1 == 2 * count) {
@@ -93,13 +95,13 @@ void make_strategy(FILE *logfile) {
 
 				// Set the decision (for next year) according to
 				// the best-performing neighbour
-				n[me].decision = n[successful].immunity;
+				n[me].decision = n[successful].immune;
 
 				/*
 				fprintf(logfile,
 					"%d is a strategist whose decision was "
 					"%d \n",
-					me, n[me].immunity);
+					me, n[me].immune);
 				fprintf(logfile, "%d's (self) payoff is %f \n",
 					me, n[me].payoff);
 				for (unsigned int i = 0; i < n[me].deg; i++) {
@@ -113,13 +115,13 @@ void make_strategy(FILE *logfile) {
 				fprintf(logfile,
 					"Successful nb is %d whose strategy is "
 					"%d \n\n",
-					successful, n[successful].immunity);
+					successful, n[successful].immune);
 				*/
 			}
 		}
 
 		 // Mutation at a low probability
-		if (GetRandomInt(0.01)) {
+		if (get_random_int(0.01)) {
                 //fprintf(logfile, "He is %d, before mutation: %d \n", me, n[me].decision);
                 n[me].decision = !n[me].decision;
 				fprintf(logfile, "Node %d mutated! \n", me);
@@ -129,12 +131,12 @@ void make_strategy(FILE *logfile) {
 
 	float covrg_each = 0.0;
 
-	// set immunity based on the decisions, and reset payoff and ninf
+	// set immune based on the decisions, and reset payoff and ninf
 	for (me = 0; me < g.n; me++) {
-		n[me].immunity = n[me].decision;
+		n[me].immune = n[me].decision;
 		n[me].payoff = 0;
 		n[me].ninf = 0;
-		if (n[me].immunity == 1) {
+		if (n[me].immune == 1) {
 			n[me].payoff = -g.vac_cost;
 			n[me].payoff_each = -g.vac_cost;
 			covrg_each += 1.0;
@@ -146,7 +148,7 @@ void make_strategy(FILE *logfile) {
 		/*
 		fprintf(logfile,
 			"I am %d and I will get vaccination next year? > %d\n",
-			me, n[me].immunity);*/
+			me, n[me].immune);*/
 	}
 	g.coverage = covrg_each / g.n;
 }

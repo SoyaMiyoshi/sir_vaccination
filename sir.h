@@ -70,7 +70,7 @@ typedef struct NODE {
 	unsigned int deg, *nb;  // degree and network neighbors
 	unsigned int heap;
 	unsigned int ninf;  // number of infections
-	unsigned int immunity;
+	unsigned int immune;
 	unsigned int decision;
 	float payoff;
 	float payoff_each;
@@ -94,9 +94,9 @@ extern uint16_t pcg_16();
 extern uint32_t pcg_32();
 extern uint32_t pcg_32_bounded();
 extern void pcg_init();
-extern int GetRandomInt(float);
-extern float GetRandomFloat();
+extern int get_random_int(float);
+extern float get_random_float();
 
 // make_strategy.c
-extern void make_strategy(FILE *);
+extern void make_strategy();
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
