@@ -97,6 +97,23 @@ extern void pcg_init();
 extern int get_random_int(float);
 extern float get_random_float();
 
+// set_global.c
+extern void set_global();
+
+// create_dir_and_file.c
+extern void create_dir_and_file();
+
 // make_strategy.c
 extern void make_strategy();
+
+// observe_status.c
+extern void calculate_outbreaksize_and_timetoext();
+extern void calculate_payoff_each_group();
+extern void reset_result_each_season();
+extern void calculate_payff_each_agent();
+extern void finalize_result_each_season();
+extern void print_result(float);
+
+// set-characteristics.c
+extern void set_characteristics();
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
