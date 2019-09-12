@@ -59,6 +59,8 @@ typedef struct GLOBALS {
 	float pfConfSqdAvg;
 	float pfImtSqdAvg;
 
+	float convergenceWatcher[SEASONS];
+
 	float t;
 	// FOR RNG
 	uint64_t state;
@@ -113,6 +115,7 @@ extern void reset_result_each_season();
 extern void calculate_payff_each_agent();
 extern void finalize_result_each_season();
 extern void print_result(float);
+extern bool check_convergence(int, int, float);
 
 // set-characteristics.c
 extern void set_characteristics();

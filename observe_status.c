@@ -117,3 +117,16 @@ void print_result(float coverage) {
 	       sqrt((g.pfImtSqdAvg - SQ(g.pfImtAvg)) / (NAVG - 1)));
 	printf("%f \n", coverage);
 }
+
+bool check_convergence(int run, int n, float threshold){
+
+	g.convergenceWatcher[run] = g.coverage;
+
+	if ( n <= run && fabs(g.convergenceWatcher[run - n] - g.convergenceWatcher[run]) < n*threshold )  {
+		fprintf(logfile, "run %d, run - n %g, run %g \n", run, g.convergenceWatcher[run - n] , g.convergenceWatcher[run]);
+		return true;
+	} 
+	
+	return false; 
+	
+}

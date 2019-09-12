@@ -98,6 +98,8 @@ int main(int argc, char *argv[]) {
 	create_dir_and_file(log_dirname, log_filename, argv);
 	logfile = fopen(log_filename, "w");
 
+	int convergence_flag = 0;
+
 	for (int run = 0; run < SEASONS + 1; run++) {
 		reset_result_each_season();
 		
@@ -111,13 +113,18 @@ int main(int argc, char *argv[]) {
 		calculate_payff_each_agent();
 		finalize_result_each_season();
 
-		if (run == 0) {
-			print_result(g.coverage * (1 - g.zealot_proportion));
-		} else {
+		if( check_convergence(run, 10, 0.001) ){
+			fprintf(logfile, "System converged!\n");
 			print_result(g.coverage);
+			convergence_flag = 1;
+			break;
 		}
-
 		make_strategy();
+	}
+
+	if (convergence_flag == 0) {
+		fprintf(logfile, "System did not converge\n");
+		print_result(g.coverage);
 	}
 
 	fclose(logfile);

@@ -81,4 +81,8 @@ void set_global(int argc, char *argv[]) {
 	g.numZl = 0;
 	g.numCf = 0;
 	g.numImt = 0;
+
+	for (int ind = 0; ind < SEASONS; ind++) {
+		g.convergenceWatcher[ind] = 0;
+	}
 }
