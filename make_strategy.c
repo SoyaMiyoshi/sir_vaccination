@@ -124,7 +124,7 @@ void make_strategy() {
 		if (get_random_int(0.01)) {
                 //fprintf(logfile, "He is %d, before mutation: %d \n", me, n[me].decision);
                 n[me].decision = !n[me].decision;
-				fprintf(logfile, "Node %d mutated! \n", me);
+				//fprintf(logfile, "Node %d mutated! \n", me);
                 //fprintf(logfile, "He is %d, after mutation: %d \n", me, n[me].decision);
 		}
 	}
