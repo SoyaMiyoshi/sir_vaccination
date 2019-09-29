@@ -14,6 +14,9 @@ extern FILE *logfile;
 
 void set_characteristics() {
 	for (unsigned int j = 0; j < g.n; j++) {
+
+		printf("jdksaljf\n");
+		/*
 		n[j].is_zealot = get_random_int(g.zealot_proportion);
 
 		if (n[j].is_zealot == 1) {
@@ -36,5 +39,6 @@ void set_characteristics() {
 				n[j].payoff_each = -g.vac_cost;
 			}
 		}
+		*/
 	}
 }

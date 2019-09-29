@@ -16,7 +16,7 @@ void set_global(int argc, char *argv[]) {
 	FILE *fp;
 
 	// a help message
-	if ((argc < 8) || (argc > 9)) {
+	if ((argc < 6) || (argc > 7)) {
 		fprintf(
 		    stderr,
 		    "usage: ./sir 1[nwk file] 2[beta] 3[initial coverage] \n"
@@ -33,7 +33,7 @@ void set_global(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	if (argc == 9)
+	if (argc == 7)
 		g.state = (uint64_t)strtoull(argv[8], NULL, 10);
 	else
 		pcg_init();
@@ -51,19 +51,7 @@ void set_global(int argc, char *argv[]) {
 		fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
 		exit(1);
 	}
-
-	g.conformist_proportion = atof(argv[5]);
-	if (g.conformist_proportion < 0 || g.conformist_proportion > 1) {
-		fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
-		exit(1);
-	}
-
-	g.zealot_proportion = atof(argv[6]);
-	if (g.zealot_proportion < 0 || g.zealot_proportion > 1) {
-		fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
-		exit(1);
-	}
-
+	
 	fp = fopen(argv[1], "r");
 	if (!fp) {
 		fprintf(stderr, "can't open '%s'\n", argv[1]);

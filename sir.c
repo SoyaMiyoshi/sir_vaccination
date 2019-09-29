@@ -89,10 +89,9 @@ void sir() {
 	}
 }
 
-
+// set characteristics randomly first, then each chooses one that miximized payoff 
 int main(int argc, char *argv[]) {
 	set_global(argc, argv);
-	set_characteristics();
 	char log_dirname[100];
 	char log_filename[100];
 	create_dir_and_file(log_dirname, log_filename, argv);
@@ -112,6 +111,11 @@ int main(int argc, char *argv[]) {
 
 		calculate_payff_each_agent();
 		finalize_result_each_season();
+
+		// Set charateristicsをここに出したい
+		if ( run > 10) {
+			set_characteristics();
+		}
 
 		if( check_convergence(run, 10, 0.001) ){
 			fprintf(logfile, "System converged!\n");

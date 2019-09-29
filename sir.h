@@ -39,9 +39,6 @@ typedef struct GLOBALS {
 	float coverage;  // argv[3]
 	float vac_cost;  // 0 < this < 1 argv[4]
 
-	float conformist_proportion;  // argv[5]
-	float zealot_proportion;      // argv[6]
-
 	unsigned int numZl;
 	unsigned int numCf;
 	unsigned int numImt;
@@ -75,7 +72,8 @@ typedef struct NODE {
 	unsigned int immune;
 	unsigned int decision;
 	float payoff;
-	float payoff_each;
+	float payoff_each; // Each SIR simulation repeated NAVG times, 
+					   //necessary to calculate the expected payoff of each group in every simulation
 	float time;
 
 	unsigned int is_zealot;
