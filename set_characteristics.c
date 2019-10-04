@@ -12,33 +12,39 @@ extern NODE *n;
 
 extern FILE *logfile;
 
-void set_characteristics() {
+void vaccinate_everyone() {
 	for (unsigned int j = 0; j < g.n; j++) {
+		n[j].immune = get_random_int(g.coverage);
+	}
+}
 
-		printf("jdksaljf\n");
-		/*
-		n[j].is_zealot = get_random_int(g.zealot_proportion);
-
-		if (n[j].is_zealot == 1) {
-			n[j].immune = 0;
-			n[j].decision = 0;
-			g.numZl++;
+void set_characteristics_randomly() {
+	for (unsigned int j = 0; j < g.n; j++) {
+		if(get_random_int(0.5)){
+			n[j].nature = Conforming;
 		}
-
-		if (n[j].is_zealot == 0) {
-			n[j].is_conformist =
-			    get_random_int(g.conformist_proportion);
-			if (n[j].is_conformist == 1) {
-				g.numCf++;
-			} else {
-				g.numImt++;
-			}
-			n[j].immune = get_random_int(g.coverage);
-			if (n[j].immune == 1) {
-				n[j].payoff = -g.vac_cost;
-				n[j].payoff_each = -g.vac_cost;
-			}
+		else{
+			n[j].nature = Rational;
 		}
-		*/
+	}
+}
+
+void set_characteristics_memory_based() {
+	for (unsigned int index = 0; index < g.n; index++) {
+		struct oneMemory * ref  = malloc(sizeof(struct oneMemory));
+
+		ref = n[index].head -> next;
+		float experience = 0;
+
+		while (ref != n[index].tail) {
+			experience += (ref -> nature) * (ref -> payoff);
+			ref = ref -> next;
+    	}
+
+		if (experience > 0) {
+			n[index].nature = Rational;
+		} else {
+			n[index].nature = Conforming;
+		}
 	}
 }

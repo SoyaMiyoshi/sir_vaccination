@@ -36,6 +36,9 @@ void read_data(FILE *fp) {
 	// allocate adjacency lists
 	for (i = 0; i < g.n; i++) {
 		n[i].payoff = 0;
+		n[i].head = malloc(sizeof(struct oneMemory));
+		n[i].tail = malloc(sizeof(struct oneMemory));
+		n[i].head -> next = n[i].tail;
 		n[i].nb = malloc(n[i].deg * sizeof(unsigned int));
 		n[i].deg = 0;
 	}

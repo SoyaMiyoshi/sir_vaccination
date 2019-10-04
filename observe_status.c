@@ -28,16 +28,13 @@ void calculate_payoff_each_group() {
 	for (unsigned int ind = 0; ind < g.n; ind++) {
 		pfAllAvg_temp += n[ind].payoff_each;
 
-		if (n[ind].is_zealot) {
-			pfZlAvg_temp += n[ind].payoff_each;
-		} else {
-			if (n[ind].is_conformist) {
-				pfConfAvg_temp += n[ind].payoff_each;
-			} else {
-				pfImtAvg_temp += n[ind].payoff_each;
-			}
+		if (n[ind].nature == Conforming) {
+			pfConfAvg_temp += n[ind].payoff_each;
+		} 
+		if (n[ind].nature == Rational) {
+			pfImtAvg_temp += n[ind].payoff_each;
 		}
-
+	
 		/* fprintf(logfile, "I am %d, immu? %d, Z? %d, Conf? %d, Pay_ec
 		  %f Pay_tot %f \n", ind, n[ind].immune, n[ind].is_zealot,
 		  n[ind].is_conformist, n[ind].payoff_each, n[ind].payoff);*/
@@ -50,12 +47,12 @@ void calculate_payoff_each_group() {
 	}
 
 	g.pfAllAvg += pfAllAvg_temp / g.n;
-	g.pfZlAvg += pfZlAvg_temp / g.numZl;
+//	g.pfZlAvg += pfZlAvg_temp / g.numZl;
 	g.pfConfAvg += pfConfAvg_temp / g.numCf;
 	g.pfImtAvg += pfImtAvg_temp / g.numImt;
 
 	g.pfAllSqdAvg += SQ(pfAllAvg_temp / g.n);
-	g.pfZlSqdAvg += SQ(pfZlAvg_temp / g.numZl);
+//	g.pfZlSqdAvg += SQ(pfZlAvg_temp / g.numZl);
 	g.pfConfSqdAvg += SQ(pfConfAvg_temp / g.numCf);
 	g.pfImtSqdAvg += SQ(pfImtAvg_temp / g.numImt);
 }
@@ -72,8 +69,8 @@ void reset_result_each_season() {
 	g.pfImtSqdAvg = 0;
 	g.pfConfAvg = 0;
 	g.pfConfSqdAvg = 0;
-	g.pfZlAvg = 0;
-	g.pfZlSqdAvg = 0;
+	// g.pfZlAvg = 0;
+	// g.pfZlSqdAvg = 0;
 }
 
 void calculate_payff_each_agent() {
@@ -91,11 +88,11 @@ void finalize_result_each_season() {
 	g.st2 /= NAVG;
 
 	g.pfAllAvg /= NAVG;
-	g.pfZlAvg /= NAVG;
+	// g.pfZlAvg /= NAVG;
 	g.pfConfAvg /= NAVG;
 	g.pfImtAvg /= NAVG;
 	g.pfAllSqdAvg /= NAVG;
-	g.pfZlSqdAvg /= NAVG;
+	// g.pfZlSqdAvg /= NAVG;
 	g.pfConfSqdAvg /= NAVG;
 	g.pfImtSqdAvg /= NAVG;
 }
@@ -109,8 +106,8 @@ void print_result(float coverage) {
 		    (NAVG - 1)));  // time to extinction (avg, stderr)
 	printf("%g %g ", g.pfAllAvg,
 	       sqrt((g.pfAllSqdAvg - SQ(g.pfAllAvg)) / (NAVG - 1)));
-	printf("%g %g ", g.pfZlAvg,
-	       sqrt((g.pfZlSqdAvg - SQ(g.pfZlAvg)) / (NAVG - 1)));
+	// printf("%g %g ", g.pfZlAvg,
+	//        sqrt((g.pfZlSqdAvg - SQ(g.pfZlAvg)) / (NAVG - 1)));
 	printf("%g %g ", g.pfConfAvg,
 	       sqrt((g.pfConfSqdAvg - SQ(g.pfConfAvg)) / (NAVG - 1)));
 	printf("%g %g ", g.pfImtAvg,

@@ -14,9 +14,9 @@
 #endif
 #include <stdbool.h>
 
-#define NAVG 100  // number of runs for averages
+#define NAVG 5  // number of runs for averages
 
-#define SEASONS 1000
+#define SEASONS 20
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
@@ -47,12 +47,12 @@ typedef struct GLOBALS {
     double st2, ss2; 
 
 	float pfAllAvg;
-	float pfZlAvg;
+	//float pfZlAvg;
 	float pfConfAvg;
 	float pfImtAvg;
 
 	float pfAllSqdAvg;
-	float pfZlSqdAvg;
+	//float pfZlSqdAvg;
 	float pfConfSqdAvg;
 	float pfImtSqdAvg;
 
@@ -65,6 +65,17 @@ typedef struct GLOBALS {
 	float rexp[0x10000];
 } GLOBALS;
 
+enum Nature {
+    Conforming = -1,
+    Rational = 1
+};
+
+struct oneMemory {
+    enum Nature nature;
+    float payoff;
+    struct oneMemory *next;
+};
+
 typedef struct NODE {
 	unsigned int deg, *nb;  // degree and network neighbors
 	unsigned int heap;
@@ -76,8 +87,10 @@ typedef struct NODE {
 					   //necessary to calculate the expected payoff of each group in every simulation
 	float time;
 
-	unsigned int is_zealot;
-	unsigned int is_conformist;
+	enum Nature nature;
+
+	struct oneMemory * head;
+	struct oneMemory * tail;
 
 } NODE;
 
@@ -116,5 +129,8 @@ extern void print_result(float);
 extern bool check_convergence(int, int, float);
 
 // set-characteristics.c
+extern void vaccinate_everyone();
 extern void set_characteristics();
+extern void set_characteristics_randomly();
+extern void set_characteristics_memory_based();
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

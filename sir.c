@@ -89,6 +89,33 @@ void sir() {
 	}
 }
 
+struct oneMemory * addToLink(struct oneMemory *tail, float payoff, enum Nature nature){
+    tail->payoff = payoff;
+	tail->nature = nature;
+    tail->next = malloc(sizeof(struct oneMemory));
+    //return new tail
+    return(tail->next);
+}
+
+struct oneMemory * removeHeadFromLink(struct oneMemory * head){
+    struct oneMemory * tmp = head -> next;
+    free(head);
+    //return new head 
+    return(tmp);
+}
+
+void add_to_memory() {
+	for (unsigned int ind = 0 ; ind < g.n; ind++) {
+		n[ind].tail = addToLink(n[ind].tail, n[ind].payoff, n[ind].nature);
+	}
+}
+
+void remove_oldest_memory(){
+	for (unsigned int ind = 0 ; ind < g.n; ind++) {
+		n[ind].head = removeHeadFromLink(n[ind].head);
+	}
+}
+
 // set characteristics randomly first, then each chooses one that miximized payoff 
 int main(int argc, char *argv[]) {
 	set_global(argc, argv);
@@ -99,9 +126,15 @@ int main(int argc, char *argv[]) {
 
 	int convergence_flag = 0;
 
+	// first, [coverage] percent of the population
+	// will get the vaccination
+	vaccinate_everyone();
+	set_characteristics_randomly();
+
+
 	for (int run = 0; run < SEASONS + 1; run++) {
 		reset_result_each_season();
-		
+
 		for (int k = 0; k < NAVG; k++) {
 			//fprintf(logfile,"~~~~~~~ Season %d, Sim %d th ~~~~~~~ \n", run,k);
 			sir();
@@ -112,17 +145,21 @@ int main(int argc, char *argv[]) {
 		calculate_payff_each_agent();
 		finalize_result_each_season();
 
-		// Set charateristicsをここに出したい
-		if ( run > 10) {
-			set_characteristics();
-		}
-
 		if( check_convergence(run, 10, 0.001) ){
 			fprintf(logfile, "System converged!\n");
 			print_result(g.coverage);
 			convergence_flag = 1;
 			break;
 		}
+
+		add_to_memory();
+		if (run < 5) {
+			set_characteristics_randomly();
+		} else {
+			remove_oldest_memory();
+			set_characteristics_memory_based();
+		}
+		
 		make_strategy();
 	}
 
