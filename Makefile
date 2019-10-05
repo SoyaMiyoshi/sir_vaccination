@@ -3,7 +3,7 @@ CFLAGS = -W -Wall -Ofast -march=native
 LDFLAGS = 
 CC = gcc
 
-OBJ1 = o/sir.o o/read_nwk.o o/heap.o o/set_global.o o/set_characteristics.o o/observe_status.o o/create_dir_and_file.o o/make_strategy.o o/pcg_rnd.o
+OBJ1 = o/sir.o o/read_nwk.o o/heap.o o/set_global.o o/set_characteristics.o o/observe_status.o o/create_dir_and_file.o o/make_strategy.o o/linked_list.o o/pcg_rnd.o
 
 all : sir
 
@@ -33,6 +33,9 @@ o/create_dir_and_file.o : $(SRC)/create_dir_and_file.c $(SRC)/sir.h $(SRC)/Makef
 
 o/make_strategy.o : $(SRC)/make_strategy.c $(SRC)/sir.h $(SRC)/Makefile
 	$(CC) $(CFLAGS) -c $(SRC)/make_strategy.c -o $@
+
+o/linked_list.o : $(SRC)/linked_list.c $(SRC)/sir.h $(SRC)/Makefile
+	$(CC) $(CFLAGS) -c $(SRC)/linked_list.c -o $@
 
 o/pcg_rnd.o : $(SRC)/pcg_rnd.c $(SRC)/sir.h $(SRC)/Makefile
 	$(CC) $(CFLAGS) -c $(SRC)/pcg_rnd.c -o $@

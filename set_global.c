@@ -20,21 +20,17 @@ void set_global(int argc, char *argv[]) {
 		fprintf(
 		    stderr,
 		    "usage: ./sir 1[nwk file] 2[beta] 3[initial coverage] \n"
-		    "4[cost of vaccination] 5[proportion of conformist] "
-		    "6[proportion of zealot] 7[filename] <seed>\n"
-		    "Note that 3[initial coverage] and 5[proportion of "
-		    "conformist] refers to the proportion of the population "
+		    "4[cost of vaccination] 5[filename] <seed>\n"
+		    "Note that 3[initial coverage]"
+		    "refers to the proportion of the population "
 		    "that "
-		    "belongs to each class\n"
-		    "EXCLUDING the zealot.\n"
-		    "For example, if 10 percent of the population is zealot, "
-		    "then out of the rest (90 percent)*(initial coverage) "
-		    "percent would get vaccination.\n");
+		    "choose to vaccinate in initial stage\n"
+		 	);
 		exit(1);
 	}
 
 	if (argc == 7)
-		g.state = (uint64_t)strtoull(argv[8], NULL, 10);
+		g.state = (uint64_t)strtoull(argv[6], NULL, 10);
 	else
 		pcg_init();
 
@@ -66,9 +62,8 @@ void set_global(int argc, char *argv[]) {
 		g.rexp[i] = -log((i + 1.0) / 0x10000) / g.beta;
 	}
 
-	g.numZl = 0;
 	g.numCf = 0;
-	g.numImt = 0;
+	g.numRational = 0;
 
 	for (int ind = 0; ind < SEASONS; ind++) {
 		g.convergenceWatcher[ind] = 0;

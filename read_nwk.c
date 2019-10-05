@@ -33,12 +33,17 @@ void read_data(FILE *fp) {
 		n[you].deg++;
 	}
 
+	// initialize agents , and 
 	// allocate adjacency lists
 	for (i = 0; i < g.n; i++) {
+		// initilaize an agent
 		n[i].payoff = 0;
+		// agent's memory (linked list)
 		n[i].head = malloc(sizeof(struct oneMemory));
 		n[i].tail = malloc(sizeof(struct oneMemory));
 		n[i].head -> next = n[i].tail;
+
+		// allocate adhacency lists
 		n[i].nb = malloc(n[i].deg * sizeof(unsigned int));
 		n[i].deg = 0;
 	}

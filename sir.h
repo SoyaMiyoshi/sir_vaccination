@@ -14,9 +14,9 @@
 #endif
 #include <stdbool.h>
 
-#define NAVG 5  // number of runs for averages
+#define NAVG 100  // number of runs for averages
 
-#define SEASONS 20
+#define SEASONS 1000
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
@@ -39,22 +39,19 @@ typedef struct GLOBALS {
 	float coverage;  // argv[3]
 	float vac_cost;  // 0 < this < 1 argv[4]
 
-	unsigned int numZl;
 	unsigned int numCf;
-	unsigned int numImt;
+	unsigned int numRational;
 
 	double st1, ss1;
     double st2, ss2; 
 
 	float pfAllAvg;
-	//float pfZlAvg;
 	float pfConfAvg;
-	float pfImtAvg;
+	float pfRationalAvg;
 
 	float pfAllSqdAvg;
-	//float pfZlSqdAvg;
 	float pfConfSqdAvg;
-	float pfImtSqdAvg;
+	float pfRationalSqdAvg;
 
 	float convergenceWatcher[SEASONS];
 
@@ -107,7 +104,7 @@ extern uint16_t pcg_16();
 extern uint32_t pcg_32();
 extern uint32_t pcg_32_bounded();
 extern void pcg_init();
-extern int get_random_int(float);
+extern int get_one_or_zero_randomly(float);
 extern float get_random_float();
 
 // set_global.c
@@ -133,4 +130,10 @@ extern void vaccinate_everyone();
 extern void set_characteristics();
 extern void set_characteristics_randomly();
 extern void set_characteristics_memory_based();
+
+// linked-list.c
+extern struct oneMemory * addToLink(struct oneMemory *, float, enum Nature);
+extern struct oneMemory * removeHeadFromLink(struct oneMemory *);
+extern void add_to_memory();
+extern void add_to_memory_and_remove_old();
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

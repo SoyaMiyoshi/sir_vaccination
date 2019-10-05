@@ -66,15 +66,15 @@ void make_strategy() {
 
 		}
 		
-		 // Mutation at a low probability
-		if (get_random_int(0.01)) {
+		// Mutation at a low probability
+		if (get_one_or_zero_randomly(0.01)) {
                 n[me].decision = !n[me].decision;
 		}
 	}
 
 	float covrg_each = 0.0;
 
-	// set immune based on the decisions, and reset payoff and ninf
+	// set immunity based on the decisions, and reset payoff and ninf
 	for (me = 0; me < g.n; me++) {
 		n[me].immune = n[me].decision;
 		n[me].payoff = 0;

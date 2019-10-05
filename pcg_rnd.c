@@ -82,7 +82,7 @@ uint16_t pcg_16 () {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-int get_random_int(float trsh){
+int get_one_or_zero_randomly(float trsh){
     float my_rand = pcg_16()*(1.0)/(1.0+UINT16_MAX);
     if(my_rand < trsh) return 1;
     else return 0;

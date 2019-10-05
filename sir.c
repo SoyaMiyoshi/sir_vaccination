@@ -1,6 +1,3 @@
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// code for SIR on networks by Petter Holme (2018)
-
 #include "sir.h"
 #include <math.h>
 #include <stdio.h>
@@ -89,33 +86,6 @@ void sir() {
 	}
 }
 
-struct oneMemory * addToLink(struct oneMemory *tail, float payoff, enum Nature nature){
-    tail->payoff = payoff;
-	tail->nature = nature;
-    tail->next = malloc(sizeof(struct oneMemory));
-    //return new tail
-    return(tail->next);
-}
-
-struct oneMemory * removeHeadFromLink(struct oneMemory * head){
-    struct oneMemory * tmp = head -> next;
-    free(head);
-    //return new head 
-    return(tmp);
-}
-
-void add_to_memory() {
-	for (unsigned int ind = 0 ; ind < g.n; ind++) {
-		n[ind].tail = addToLink(n[ind].tail, n[ind].payoff, n[ind].nature);
-	}
-}
-
-void remove_oldest_memory(){
-	for (unsigned int ind = 0 ; ind < g.n; ind++) {
-		n[ind].head = removeHeadFromLink(n[ind].head);
-	}
-}
-
 // set characteristics randomly first, then each chooses one that miximized payoff 
 int main(int argc, char *argv[]) {
 	set_global(argc, argv);
@@ -130,17 +100,16 @@ int main(int argc, char *argv[]) {
 	// will get the vaccination
 	vaccinate_everyone();
 	set_characteristics_randomly();
-
-
 	for (int run = 0; run < SEASONS + 1; run++) {
 		reset_result_each_season();
 
 		for (int k = 0; k < NAVG; k++) {
-			//fprintf(logfile,"~~~~~~~ Season %d, Sim %d th ~~~~~~~ \n", run,k);
 			sir();
 			calculate_outbreaksize_and_timetoext();
 			calculate_payoff_each_group();
 		}
+
+		fprintf(logfile, "numCf %d, numRational %d, g.n %d \n", g.numCf, g.numRational, g.n);
 
 		calculate_payff_each_agent();
 		finalize_result_each_season();
@@ -152,14 +121,14 @@ int main(int argc, char *argv[]) {
 			break;
 		}
 
-		add_to_memory();
 		if (run < 5) {
+			add_to_memory();
 			set_characteristics_randomly();
 		} else {
-			remove_oldest_memory();
+			add_to_memory_and_remove_old();
 			set_characteristics_memory_based();
 		}
-		
+
 		make_strategy();
 	}
 
