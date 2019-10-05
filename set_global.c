@@ -16,11 +16,11 @@ void set_global(int argc, char *argv[]) {
 	FILE *fp;
 
 	// a help message
-	if ((argc < 6) || (argc > 7)) {
+	if ((argc < 7) || (argc > 8)) {
 		fprintf(
 		    stderr,
 		    "usage: ./sir 1[nwk file] 2[beta] 3[initial coverage] \n"
-		    "4[cost of vaccination] 5[filename] <seed>\n"
+		    "4[cost of vaccination] 5[probability of becoming rational] 6[filename] <seed>\n"
 		    "Note that 3[initial coverage]"
 		    "refers to the proportion of the population "
 		    "that "
@@ -29,8 +29,8 @@ void set_global(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	if (argc == 7)
-		g.state = (uint64_t)strtoull(argv[6], NULL, 10);
+	if (argc == 8)
+		g.state = (uint64_t)strtoull(argv[7], NULL, 10);
 	else
 		pcg_init();
 
@@ -45,6 +45,12 @@ void set_global(int argc, char *argv[]) {
 	g.vac_cost = atof(argv[4]);
 	if (g.vac_cost < 0 || g.vac_cost > 1) {
 		fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
+		exit(1);
+	}
+
+	g.probability_becoming_rational = atof(argv[5]);
+	if (g.probability_becoming_rational < 0 || g.probability_becoming_rational > 1) {
+		fprintf(stderr, "Probability of becoming rational should 0 to 1 \n");
 		exit(1);
 	}
 	

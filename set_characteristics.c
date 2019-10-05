@@ -26,7 +26,7 @@ void vaccinate_everyone() {
 void set_characteristics_randomly() {
 	initialize_sensus();
 	for (unsigned int j = 0; j < g.n; j++) {
-		if(get_one_or_zero_randomly(0.5)){
+		if(get_one_or_zero_randomly(g.probability_becoming_rational)){
 			n[j].nature = Conforming;
 			g.numCf ++;
 		}
