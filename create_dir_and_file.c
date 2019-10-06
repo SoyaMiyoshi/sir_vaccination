@@ -46,7 +46,7 @@ void create_dir_and_file(char *log_dirname, char *log_filename, char *argv[]) {
 		sprintf(log_filename, "log/b=%s:c=%s/v=%s.txt", bs,
 			cs, vs);
 	} else {
-		printf("argv[5] should be 'b', 'c', or 'v'.\n");
+		//printf("argv[5] should be 'b', 'c', or 'v'.\n");
 	}
 
 	if (stat(log_dirname, &st) == -1) {

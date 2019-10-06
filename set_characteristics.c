@@ -27,11 +27,11 @@ void set_characteristics_randomly() {
 	initialize_sensus();
 	for (unsigned int j = 0; j < g.n; j++) {
 		if(get_one_or_zero_randomly(g.probability_becoming_rational)){
-			n[j].nature = Conforming;
+			n[j].nature = Rational;
 			g.numCf ++;
 		}
 		else{
-			n[j].nature = Rational;
+			n[j].nature = Conforming;
 			g.numRational ++;
 		}
 	}
