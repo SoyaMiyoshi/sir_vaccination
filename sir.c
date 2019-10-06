@@ -94,8 +94,6 @@ int main(int argc, char *argv[]) {
 	create_dir_and_file(log_dirname, log_filename, argv);
 	logfile = fopen(log_filename, "w");
 
-	int convergence_flag = 0;
-
 	// first, [coverage] percent of the population
 	// will get the vaccination
 	vaccinate_everyone();
@@ -109,17 +107,11 @@ int main(int argc, char *argv[]) {
 			calculate_payoff_each_group();
 		}
 
-		fprintf(logfile, "numCf %d, numRational %d, g.n %d \n", g.numCf, g.numRational, g.n);
-
 		calculate_payff_each_agent();
+
 		finalize_result_each_season();
 
-		if( check_convergence(run, 10, 0.001) ){
-			fprintf(logfile, "System converged!\n");
-			print_result(g.coverage);
-			convergence_flag = 1;
-			break;
-		}
+		print_result(g.coverage);
 
 		if (run < 5) {
 			add_to_memory();
@@ -130,11 +122,6 @@ int main(int argc, char *argv[]) {
 		}
 
 		make_strategy();
-	}
-
-	if (convergence_flag == 0) {
-		fprintf(logfile, "System did not converge\n");
-		print_result(g.coverage);
 	}
 
 	fclose(logfile);

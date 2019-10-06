@@ -29,11 +29,6 @@ void set_global(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	if (argc == 8)
-		g.state = (uint64_t)strtoull(argv[7], NULL, 10);
-	else
-		pcg_init();
-
 	g.beta = atof(argv[2]);
 
 	g.coverage = atof(argv[3]);
@@ -53,6 +48,11 @@ void set_global(int argc, char *argv[]) {
 		fprintf(stderr, "Probability of becoming rational should 0 to 1 \n");
 		exit(1);
 	}
+
+	if (argc == 8)
+		g.state = (uint64_t)strtoull(argv[7], NULL, 10);
+	else
+		pcg_init();
 	
 	fp = fopen(argv[1], "r");
 	if (!fp) {
