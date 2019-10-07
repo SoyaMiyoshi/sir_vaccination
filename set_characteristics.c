@@ -28,17 +28,18 @@ void set_characteristics_randomly() {
 	for (unsigned int j = 0; j < g.n; j++) {
 		if(get_one_or_zero_randomly(g.probability_becoming_rational)){
 			n[j].nature = Rational;
-			g.numCf ++;
+			g.numRational ++;
 		}
 		else{
 			n[j].nature = Conforming;
-			g.numRational ++;
+			g.numCf ++;
 		}
 	}
 }
 
 // This function to model the spread of conformism 
 // To do : which of the parametar spreads conformism in this setting if modelled this way? 
+// Actually referring to the same data each season is inefficient.
 void set_characteristics_memory_based() {
 	initialize_sensus();
 	for (unsigned int index = 0; index < g.n; index++) {
