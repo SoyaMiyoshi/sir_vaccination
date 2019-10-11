@@ -21,43 +21,31 @@ void calculate_outbreaksize_and_timetoext() {
 
 void calculate_payoff_each_group() {
 	float pfAllAvg_temp = 0.0;
-	float pfImtAvg_temp = 0.0;
+	float pfRationalAvg_temp = 0.0;
 	float pfConfAvg_temp = 0.0;
-	float pfZlAvg_temp = 0.0;
 
 	for (unsigned int ind = 0; ind < g.n; ind++) {
 		pfAllAvg_temp += n[ind].payoff_each;
 
-		if (n[ind].is_zealot) {
-			pfZlAvg_temp += n[ind].payoff_each;
-		} else {
-			if (n[ind].is_conformist) {
-				pfConfAvg_temp += n[ind].payoff_each;
-			} else {
-				pfImtAvg_temp += n[ind].payoff_each;
-			}
+		if (n[ind].nature == Conforming) {
+			pfConfAvg_temp += n[ind].payoff_each;
+		} 
+		if (n[ind].nature == Rational) {
+			pfRationalAvg_temp += n[ind].payoff_each;
 		}
-
-		/* fprintf(logfile, "I am %d, immu? %d, Z? %d, Conf? %d, Pay_ec
-		  %f Pay_tot %f \n", ind, n[ind].immune, n[ind].is_zealot,
-		  n[ind].is_conformist, n[ind].payoff_each, n[ind].payoff);*/
 
 		if (n[ind].immune == 0) {
 			n[ind].payoff_each = 0;
 		}
-		// fprintf(logfile, "I am %d, Conf? %d, Payoff_each %f \n", l,
-		// n[l].is_conformist, n[l].payoff_each);
 	}
 
 	g.pfAllAvg += pfAllAvg_temp / g.n;
-	g.pfZlAvg += pfZlAvg_temp / g.numZl;
 	g.pfConfAvg += pfConfAvg_temp / g.numCf;
-	g.pfImtAvg += pfImtAvg_temp / g.numImt;
+	g.pfRationalAvg += pfRationalAvg_temp / g.numRational;
 
 	g.pfAllSqdAvg += SQ(pfAllAvg_temp / g.n);
-	g.pfZlSqdAvg += SQ(pfZlAvg_temp / g.numZl);
 	g.pfConfSqdAvg += SQ(pfConfAvg_temp / g.numCf);
-	g.pfImtSqdAvg += SQ(pfImtAvg_temp / g.numImt);
+	g.pfRationalSqdAvg += SQ(pfRationalAvg_temp / g.numRational);
 }
 
 void reset_result_each_season() {
@@ -68,12 +56,10 @@ void reset_result_each_season() {
 
 	g.pfAllAvg = 0;
 	g.pfAllSqdAvg = 0;
-	g.pfImtAvg = 0;
-	g.pfImtSqdAvg = 0;
+	g.pfRationalAvg = 0;
+	g.pfRationalSqdAvg = 0;
 	g.pfConfAvg = 0;
 	g.pfConfSqdAvg = 0;
-	g.pfZlAvg = 0;
-	g.pfZlSqdAvg = 0;
 }
 
 void calculate_payff_each_agent() {
@@ -91,13 +77,11 @@ void finalize_result_each_season() {
 	g.st2 /= NAVG;
 
 	g.pfAllAvg /= NAVG;
-	g.pfZlAvg /= NAVG;
 	g.pfConfAvg /= NAVG;
-	g.pfImtAvg /= NAVG;
+	g.pfRationalAvg /= NAVG;
 	g.pfAllSqdAvg /= NAVG;
-	g.pfZlSqdAvg /= NAVG;
 	g.pfConfSqdAvg /= NAVG;
-	g.pfImtSqdAvg /= NAVG;
+	g.pfRationalSqdAvg /= NAVG;
 }
 
 void print_result(float coverage) {
@@ -109,12 +93,11 @@ void print_result(float coverage) {
 		    (NAVG - 1)));  // time to extinction (avg, stderr)
 	printf("%g %g ", g.pfAllAvg,
 	       sqrt((g.pfAllSqdAvg - SQ(g.pfAllAvg)) / (NAVG - 1)));
-	printf("%g %g ", g.pfZlAvg,
-	       sqrt((g.pfZlSqdAvg - SQ(g.pfZlAvg)) / (NAVG - 1)));
 	printf("%g %g ", g.pfConfAvg,
 	       sqrt((g.pfConfSqdAvg - SQ(g.pfConfAvg)) / (NAVG - 1)));
-	printf("%g %g ", g.pfImtAvg,
-	       sqrt((g.pfImtSqdAvg - SQ(g.pfImtAvg)) / (NAVG - 1)));
+	printf("%g %g ", g.pfRationalAvg,
+	       sqrt((g.pfRationalSqdAvg - SQ(g.pfRationalAvg)) / (NAVG - 1)));
+    printf("%g ", (double)g.numCf/g.n); // Proportion of conforming nodes 
 	printf("%f \n", coverage);
 }
 

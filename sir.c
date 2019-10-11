@@ -1,6 +1,3 @@
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// code for SIR on networks by Petter Holme (2018)
-
 #include "sir.h"
 #include <math.h>
 #include <stdio.h>
@@ -89,42 +86,42 @@ void sir() {
 	}
 }
 
-
+// set characteristics randomly first, then each chooses one that miximized payoff 
 int main(int argc, char *argv[]) {
 	set_global(argc, argv);
-	set_characteristics();
 	char log_dirname[100];
 	char log_filename[100];
 	create_dir_and_file(log_dirname, log_filename, argv);
 	logfile = fopen(log_filename, "w");
 
-	int convergence_flag = 0;
-
+	// first, [coverage] percent of the population
+	// will get the vaccination
+	vaccinate_everyone();
+	set_characteristics_randomly();
 	for (int run = 0; run < SEASONS + 1; run++) {
 		reset_result_each_season();
-		
+
 		for (int k = 0; k < NAVG; k++) {
-			//fprintf(logfile,"~~~~~~~ Season %d, Sim %d th ~~~~~~~ \n", run,k);
 			sir();
 			calculate_outbreaksize_and_timetoext();
 			calculate_payoff_each_group();
 		}
 
 		calculate_payff_each_agent();
+
 		finalize_result_each_season();
 
-		if( check_convergence(run, 10, 0.001) ){
-			fprintf(logfile, "System converged!\n");
-			print_result(g.coverage);
-			convergence_flag = 1;
-			break;
-		}
-		make_strategy();
-	}
-
-	if (convergence_flag == 0) {
-		fprintf(logfile, "System did not converge\n");
 		print_result(g.coverage);
+
+		if (run < 5) {
+			add_to_memory();
+			set_characteristics_randomly();
+		} else {
+			add_to_memory_and_remove_old();
+			set_characteristics_memory_based();
+		}
+
+		make_strategy();
 	}
 
 	fclose(logfile);

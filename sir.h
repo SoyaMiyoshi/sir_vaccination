@@ -38,26 +38,21 @@ typedef struct GLOBALS {
 	// Vaccination coverage
 	float coverage;  // argv[3]
 	float vac_cost;  // 0 < this < 1 argv[4]
+	float probability_becoming_rational; // argv[6]
 
-	float conformist_proportion;  // argv[5]
-	float zealot_proportion;      // argv[6]
-
-	unsigned int numZl;
 	unsigned int numCf;
-	unsigned int numImt;
+	unsigned int numRational;
 
 	double st1, ss1;
     double st2, ss2; 
 
 	float pfAllAvg;
-	float pfZlAvg;
 	float pfConfAvg;
-	float pfImtAvg;
+	float pfRationalAvg;
 
 	float pfAllSqdAvg;
-	float pfZlSqdAvg;
 	float pfConfSqdAvg;
-	float pfImtSqdAvg;
+	float pfRationalSqdAvg;
 
 	float convergenceWatcher[SEASONS];
 
@@ -68,6 +63,17 @@ typedef struct GLOBALS {
 	float rexp[0x10000];
 } GLOBALS;
 
+enum Nature {
+    Conforming = -1,
+    Rational = 1
+};
+
+struct oneMemory {
+    enum Nature nature;
+    float payoff;
+    struct oneMemory *next;
+};
+
 typedef struct NODE {
 	unsigned int deg, *nb;  // degree and network neighbors
 	unsigned int heap;
@@ -75,11 +81,14 @@ typedef struct NODE {
 	unsigned int immune;
 	unsigned int decision;
 	float payoff;
-	float payoff_each;
+	float payoff_each; // Each SIR simulation repeated NAVG times, 
+					   //necessary to calculate the expected payoff of each group in every simulation
 	float time;
 
-	unsigned int is_zealot;
-	unsigned int is_conformist;
+	enum Nature nature;
+
+	struct oneMemory * head;
+	struct oneMemory * tail;
 
 } NODE;
 
@@ -96,7 +105,7 @@ extern uint16_t pcg_16();
 extern uint32_t pcg_32();
 extern uint32_t pcg_32_bounded();
 extern void pcg_init();
-extern int get_random_int(float);
+extern int get_one_or_zero_randomly(float);
 extern float get_random_float();
 
 // set_global.c
@@ -118,5 +127,14 @@ extern void print_result(float);
 extern bool check_convergence(int, int, float);
 
 // set-characteristics.c
+extern void vaccinate_everyone();
 extern void set_characteristics();
+extern void set_characteristics_randomly();
+extern void set_characteristics_memory_based();
+
+// linked-list.c
+extern struct oneMemory * addToLink(struct oneMemory *, float, enum Nature);
+extern struct oneMemory * removeHeadFromLink(struct oneMemory *);
+extern void add_to_memory();
+extern void add_to_memory_and_remove_old();
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

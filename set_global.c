@@ -16,27 +16,18 @@ void set_global(int argc, char *argv[]) {
 	FILE *fp;
 
 	// a help message
-	if ((argc < 8) || (argc > 9)) {
+	if ((argc < 7) || (argc > 8)) {
 		fprintf(
 		    stderr,
 		    "usage: ./sir 1[nwk file] 2[beta] 3[initial coverage] \n"
-		    "4[cost of vaccination] 5[proportion of conformist] "
-		    "6[proportion of zealot] 7[filename] <seed>\n"
-		    "Note that 3[initial coverage] and 5[proportion of "
-		    "conformist] refers to the proportion of the population "
+		    "4[cost of vaccination] 5[probability of becoming rational] 6[filename] <seed>\n"
+		    "Note that 3[initial coverage]"
+		    "refers to the proportion of the population "
 		    "that "
-		    "belongs to each class\n"
-		    "EXCLUDING the zealot.\n"
-		    "For example, if 10 percent of the population is zealot, "
-		    "then out of the rest (90 percent)*(initial coverage) "
-		    "percent would get vaccination.\n");
+		    "choose to vaccinate in initial stage\n"
+		 	);
 		exit(1);
 	}
-
-	if (argc == 9)
-		g.state = (uint64_t)strtoull(argv[8], NULL, 10);
-	else
-		pcg_init();
 
 	g.beta = atof(argv[2]);
 
@@ -52,18 +43,17 @@ void set_global(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	g.conformist_proportion = atof(argv[5]);
-	if (g.conformist_proportion < 0 || g.conformist_proportion > 1) {
-		fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
+	g.probability_becoming_rational = atof(argv[5]);
+	if (g.probability_becoming_rational < 0 || g.probability_becoming_rational > 1) {
+		fprintf(stderr, "Probability of becoming rational should 0 to 1 \n");
 		exit(1);
 	}
 
-	g.zealot_proportion = atof(argv[6]);
-	if (g.zealot_proportion < 0 || g.zealot_proportion > 1) {
-		fprintf(stderr, "Vaccination cost (5th argv) should 0 to 1\n");
-		exit(1);
-	}
-
+	if (argc == 8)
+		g.state = (uint64_t)strtoull(argv[7], NULL, 10);
+	else
+		pcg_init();
+	
 	fp = fopen(argv[1], "r");
 	if (!fp) {
 		fprintf(stderr, "can't open '%s'\n", argv[1]);
@@ -78,9 +68,8 @@ void set_global(int argc, char *argv[]) {
 		g.rexp[i] = -log((i + 1.0) / 0x10000) / g.beta;
 	}
 
-	g.numZl = 0;
 	g.numCf = 0;
-	g.numImt = 0;
+	g.numRational = 0;
 
 	for (int ind = 0; ind < SEASONS; ind++) {
 		g.convergenceWatcher[ind] = 0;
