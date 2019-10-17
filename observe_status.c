@@ -103,10 +103,8 @@ void print_result(float coverage) {
 
 bool check_convergence(int run, int n, float threshold){
 
-	g.convergenceWatcher[run] = g.coverage;
-
-	if ( n <= run && fabs(g.convergenceWatcher[run - n] - g.convergenceWatcher[run]) < n*threshold )  {
-		fprintf(logfile, "run %d, run - n %g, run %g \n", run, g.convergenceWatcher[run - n] , g.convergenceWatcher[run]);
+	if ( n <= run && fabs(g.convergenceWatcher[run - n] - g.convergenceWatcher[run]) < n*threshold ) {
+		fprintf(logfile, "Convereged at run %d, values : run - n %g, run %g \n", run, g.convergenceWatcher[run - n] , g.convergenceWatcher[run]);
 		return true;
 	} 
 	

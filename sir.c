@@ -93,12 +93,14 @@ int main(int argc, char *argv[]) {
 	char log_filename[100];
 	create_dir_and_file(log_dirname, log_filename, argv);
 	logfile = fopen(log_filename, "w");
+	printf("Hi\n");
 
 	// first, [coverage] percent of the population
 	// will get the vaccination
 	vaccinate_everyone();
 	set_characteristics_randomly();
-	for (int run = 0; run < SEASONS + 1; run++) {
+
+	for (int run = 0; run < SEASONS; run++) {
 		reset_result_each_season();
 
 		for (int k = 0; k < NAVG; k++) {
@@ -108,20 +110,26 @@ int main(int argc, char *argv[]) {
 		}
 
 		calculate_payff_each_agent();
-
 		finalize_result_each_season();
-
-		print_result(g.coverage);
+		g.convergenceWatcher[run] = g.numCf/g.n;
 
 		if (run < 5) {
 			add_to_memory();
 			set_characteristics_randomly();
-		} else {
+			make_strategy();
+		} else if ( run < SEASONS - 1 ) {
+			if (check_convergence(run, 5, 0.005)) {
+				print_result(g.coverage);
+				break;
+			}
 			add_to_memory_and_remove_old();
 			set_characteristics_memory_based();
+			make_strategy();
+		} else {
+			fprintf(logfile, "System did not converge \n");
+			print_result(g.coverage);
 		}
 
-		make_strategy();
 	}
 
 	fclose(logfile);

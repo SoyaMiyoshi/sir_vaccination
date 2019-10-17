@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/sir",
-            "args": ["nwk/iceland.lnk", "2.0", "0.1", "0.1", "0.1", "b"],
+            "args": ["nwk/test.lnk", "2.0", "0.1", "0.1", "0.1", "b"],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
             "environment": [],
