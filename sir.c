@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
 			set_characteristics_randomly();
 			make_strategy();
 		} else if ( run < SEASONS - 1 ) {
-			if (check_convergence(run, 5, 0.005)) {
+			if ( 100 < run && check_convergence(run, 5, 0.005)) {
 				print_result(g.coverage);
 				break;
 			}

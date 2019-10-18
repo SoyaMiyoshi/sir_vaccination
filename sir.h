@@ -14,9 +14,9 @@
 #endif
 #include <stdbool.h>
 
-#define NAVG 1  // number of runs for averages
+#define NAVG 100  // number of runs for averages
 
-#define SEASONS 7
+#define SEASONS 1000
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
