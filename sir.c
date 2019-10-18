@@ -93,7 +93,6 @@ int main(int argc, char *argv[]) {
 	char log_filename[100];
 	create_dir_and_file(log_dirname, log_filename, argv);
 	logfile = fopen(log_filename, "w");
-	printf("Hi\n");
 
 	// first, [coverage] percent of the population
 	// will get the vaccination
@@ -111,14 +110,14 @@ int main(int argc, char *argv[]) {
 
 		calculate_payff_each_agent();
 		finalize_result_each_season();
-		g.convergenceWatcher[run] = g.numCf/g.n;
+		g.convergenceWatcher[run] = (float)g.numCf/g.n;
 
 		if (run < 5) {
 			add_to_memory();
 			set_characteristics_randomly();
 			make_strategy();
 		} else if ( run < SEASONS - 1 ) {
-			if ( 100 < run && check_convergence(run, 5, 0.005)) {
+			if ( 20 < run && check_convergence(run, 5, 0.00005)) {
 				print_result(g.coverage);
 				break;
 			}

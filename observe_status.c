@@ -85,18 +85,19 @@ void finalize_result_each_season() {
 }
 
 void print_result(float coverage) {
-	printf("%g %g ", g.ss1,
-	       sqrt((g.ss2 - SQ(g.ss1)) /
-		    (NAVG - 1)));  // outbreaksize (avg, stderr)
-	printf("%g %g ", g.st1,
-	       sqrt((g.st2 - SQ(g.st1)) /
-		    (NAVG - 1)));  // time to extinction (avg, stderr)
-	printf("%g %g ", g.pfAllAvg,
-	       sqrt((g.pfAllSqdAvg - SQ(g.pfAllAvg)) / (NAVG - 1)));
-	printf("%g %g ", g.pfConfAvg,
-	       sqrt((g.pfConfSqdAvg - SQ(g.pfConfAvg)) / (NAVG - 1)));
-	printf("%g %g ", g.pfRationalAvg,
-	       sqrt((g.pfRationalSqdAvg - SQ(g.pfRationalAvg)) / (NAVG - 1)));
+	printf("%g ", g.ss1);
+	// printf("%g %g ", g.ss1,
+	//        sqrt((g.ss2 - SQ(g.ss1)) /
+	// 	    (NAVG - 1)));  // outbreaksize (avg, stderr)
+	// printf("%g %g ", g.st1,
+	//        sqrt((g.st2 - SQ(g.st1)) /
+	// 	    (NAVG - 1)));  // time to extinction (avg, stderr)
+	// printf("%g %g ", g.pfAllAvg,
+	//        sqrt((g.pfAllSqdAvg - SQ(g.pfAllAvg)) / (NAVG - 1)));
+	// printf("%g %g ", g.pfConfAvg,
+	//        sqrt((g.pfConfSqdAvg - SQ(g.pfConfAvg)) / (NAVG - 1)));
+	// printf("%g %g ", g.pfRationalAvg,
+	//        sqrt((g.pfRationalSqdAvg - SQ(g.pfRationalAvg)) / (NAVG - 1)));
     printf("%g ", (double)g.numCf/g.n); // Proportion of conforming nodes 
 	printf("%f \n", coverage);
 }
