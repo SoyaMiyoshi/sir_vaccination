@@ -1,5 +1,5 @@
 SRC = .
-CFLAGS = -W -Wall -Ofast -march=native -g
+CFLAGS = -W -Wall -Ofast -march=native --debug
 LDFLAGS = 
 CC = gcc
 
