@@ -33,7 +33,7 @@ void set_global(int argc, char *argv[]) {
 
 	g.coverage = atof(argv[3]);
 	if (g.coverage < 0 || g.coverage > 1) {
-		fprintf(stderr, "Coverage should be 0 to 1.\n");
+		fprintf(stderr, "Coverage (4th argv) should be 0 to 1.\n");
 		exit(1);
 	}
 
@@ -43,9 +43,9 @@ void set_global(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	g.probability_becoming_rational = atof(argv[5]);
-	if (g.probability_becoming_rational < 0 || g.probability_becoming_rational > 1) {
-		fprintf(stderr, "Probability of becoming rational should 0 to 1 \n");
+	g.degree_rationality = atof(argv[5]);
+	if (g.degree_rationality < 0 || g.degree_rationality > 1) {
+		fprintf(stderr, "Degree of rationality (6th argv) should 0 to 1 \n");
 		exit(1);
 	}
 
@@ -70,8 +70,5 @@ void set_global(int argc, char *argv[]) {
 
 	g.numCf = 0;
 	g.numRational = 0;
-
-	for (int ind = 0; ind < SEASONS; ind++) {
-		g.convergenceWatcher[ind] = 0;
-	}
+	
 }
