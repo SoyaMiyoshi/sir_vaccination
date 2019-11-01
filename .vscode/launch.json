@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/sir",
             // beta, coverage, vac_cost, willingness
-            "args": [".tmp_nwkfile", "1.9", "0.1", "0.1", "0.1", "b"],
+            "args": [".tmp_nwkfile", "2.0", "0", "0.5", "0.1", "b"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

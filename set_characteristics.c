@@ -26,7 +26,7 @@ void vaccinate_everyone() {
 void set_characteristics_randomly() {
 	initialize_sensus();
 	for (unsigned int j = 0; j < g.n; j++) {
-		if(get_one_or_zero_randomly(g.probability_becoming_rational)){
+		if(get_one_or_zero_randomly(g.degree_rationality)){
 			n[j].nature = Rational;
 			g.numRational ++;
 		}
@@ -73,7 +73,7 @@ void set_characteristics_memory_based() {
 			n[index].nature = Rational;
 		}
 
-		if (num_rational != 0 && num_conforming != 0){
+		if (num_rational != 0 && num_conforming != 0) {
 			if (experience_rational / num_rational > experience_conforming/ num_conforming) {
 				n[index].nature = Rational;
 			} else {

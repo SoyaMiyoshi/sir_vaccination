@@ -38,7 +38,7 @@ typedef struct GLOBALS {
 	// Vaccination coverage
 	float coverage;  // argv[3]
 	float vac_cost;  // 0 < this < 1 argv[4]
-	float probability_becoming_rational; // argv[6]
+	float degree_rationality; // argv[6]
 
 	unsigned int numCf;
 	unsigned int numRational;
