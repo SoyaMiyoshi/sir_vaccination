@@ -112,7 +112,7 @@ extern float get_random_float();
 extern void set_global();
 
 // create_dir_and_file.c
-extern void create_dir_and_file();
+// extern void create_dir_and_file();
 
 // make_strategy.c
 extern void make_strategy();

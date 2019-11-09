@@ -10,7 +10,7 @@
 GLOBALS g;
 NODE *n;
 
-FILE *logfile;
+// FILE *logfile;
 
 void infect() {
 	unsigned int i, you, me = g.heap[1];
@@ -89,10 +89,10 @@ void sir() {
 // set characteristics randomly first, then each chooses one that miximized payoff 
 int main(int argc, char *argv[]) {
 	set_global(argc, argv);
-	char log_dirname[100];
-	char log_filename[100];
-	create_dir_and_file(log_dirname, log_filename, argv);
-	logfile = fopen(log_filename, "w");
+	// char log_dirname[100];
+	// char log_filename[100];
+	// create_dir_and_file(log_dirname, log_filename, argv);
+	// logfile = fopen(log_filename, "w");
 
 	// first, [coverage] percent of the population
 	// will get the vaccination
@@ -125,13 +125,13 @@ int main(int argc, char *argv[]) {
 			set_characteristics_memory_based();
 			make_strategy();
 		} else {
-			fprintf(logfile, "System did not converge \n");
+			// fprintf(logfile, "System did not converge \n");
 			print_result(g.coverage);
 		}
 
 	}
 
-	fclose(logfile);
+	// fclose(logfile);
 
 	for (unsigned int re = 0; re < g.n; re++) free(n[re].nb);
 	free(n);

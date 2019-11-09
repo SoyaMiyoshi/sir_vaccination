@@ -29,3 +29,6 @@ report
 h
 testConvergence
 *.csv
+batches
+old
+tmp*

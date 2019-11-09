@@ -10,7 +10,7 @@
 extern GLOBALS g;
 extern NODE *n;
 
-extern FILE *logfile;
+// extern FILE *logfile;
 
 void initialize_sensus() {
 	g.numCf = 0;
