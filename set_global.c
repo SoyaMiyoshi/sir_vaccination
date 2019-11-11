@@ -67,8 +67,5 @@ void set_global(int argc, char *argv[]) {
 	for (int i = 0; i < 0x10000; i++) {
 		g.rexp[i] = -log((i + 1.0) / 0x10000) / g.beta;
 	}
-
-	g.numCf = 0;
-	g.numRational = 0;
 	
 }

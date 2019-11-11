@@ -14,52 +14,52 @@ extern FILE *logfile;
 
 void calculate_outbreaksize_and_timetoext() {
 	g.ss1 += (double)g.s;
-	g.ss2 += SQ((double)g.s);  // stderr を計算するため
-	g.st1 += g.t;
-	g.st2 += SQ(g.t);
+	// g.ss2 += SQ((double)g.s);  // stderr を計算するため
+	// g.st1 += g.t;
+	// g.st2 += SQ(g.t);
 }
 
 void calculate_payoff_each_group() {
-	float pfAllAvg_temp = 0.0;
-	float pfRationalAvg_temp = 0.0;
-	float pfConfAvg_temp = 0.0;
+	// float pfAllAvg_temp = 0.0;
+	// float pfRationalAvg_temp = 0.0;
+	// float pfConfAvg_temp = 0.0;
 
-	for (unsigned int ind = 0; ind < g.n; ind++) {
-		pfAllAvg_temp += n[ind].payoff_each;
+	// for (unsigned int ind = 0; ind < g.n; ind++) {
+	// 	pfAllAvg_temp += n[ind].payoff_each;
 
-		if (n[ind].nature == Conforming) {
-			pfConfAvg_temp += n[ind].payoff_each;
-		} 
-		if (n[ind].nature == Rational) {
-			pfRationalAvg_temp += n[ind].payoff_each;
-		}
+	// 	if (n[ind].nature == Conforming) {
+	// 		pfConfAvg_temp += n[ind].payoff_each;
+	// 	} 
+	// 	if (n[ind].nature == Rational) {
+	// 		pfRationalAvg_temp += n[ind].payoff_each;
+	// 	}
 
-		if (n[ind].immune == 0) {
-			n[ind].payoff_each = 0;
-		}
-	}
+	// 	if (n[ind].immune == 0) {
+	// 		n[ind].payoff_each = 0;
+	// 	}
+	// }
 
-	g.pfAllAvg += pfAllAvg_temp / g.n;
-	g.pfConfAvg += pfConfAvg_temp / g.numCf;
-	g.pfRationalAvg += pfRationalAvg_temp / g.numRational;
+	// g.pfAllAvg += pfAllAvg_temp / g.n;
+	// g.pfConfAvg += pfConfAvg_temp / g.numCf;
+	// g.pfRationalAvg += pfRationalAvg_temp / g.numRational;
 
-	g.pfAllSqdAvg += SQ(pfAllAvg_temp / g.n);
-	g.pfConfSqdAvg += SQ(pfConfAvg_temp / g.numCf);
-	g.pfRationalSqdAvg += SQ(pfRationalAvg_temp / g.numRational);
+	// g.pfAllSqdAvg += SQ(pfAllAvg_temp / g.n);
+	// g.pfConfSqdAvg += SQ(pfConfAvg_temp / g.numCf);
+	// g.pfRationalSqdAvg += SQ(pfRationalAvg_temp / g.numRational);
 }
 
 void reset_result_each_season() {
 	g.ss1 = 0;
-	g.ss2 = 0;
-	g.st1 = 0;
-	g.st2 = 0;  // for averages
+	// g.ss2 = 0;
+	// g.st1 = 0;
+	// g.st2 = 0;  // for averages
 
-	g.pfAllAvg = 0;
-	g.pfAllSqdAvg = 0;
-	g.pfRationalAvg = 0;
-	g.pfRationalSqdAvg = 0;
-	g.pfConfAvg = 0;
-	g.pfConfSqdAvg = 0;
+	// g.pfAllAvg = 0;
+	// g.pfAllSqdAvg = 0;
+	// g.pfRationalAvg = 0;
+	// g.pfRationalSqdAvg = 0;
+	// g.pfConfAvg = 0;
+	// g.pfConfSqdAvg = 0;
 }
 
 void calculate_payff_each_agent() {
@@ -72,16 +72,16 @@ void calculate_payff_each_agent() {
 
 void finalize_result_each_season() {
 	g.ss1 /= NAVG;
-	g.ss2 /= NAVG;
-	g.st1 /= NAVG;
-	g.st2 /= NAVG;
+	// g.ss2 /= NAVG;
+	// g.st1 /= NAVG;
+	// g.st2 /= NAVG;
 
-	g.pfAllAvg /= NAVG;
-	g.pfConfAvg /= NAVG;
-	g.pfRationalAvg /= NAVG;
-	g.pfAllSqdAvg /= NAVG;
-	g.pfConfSqdAvg /= NAVG;
-	g.pfRationalSqdAvg /= NAVG;
+	// g.pfAllAvg /= NAVG;
+	// g.pfConfAvg /= NAVG;
+	// g.pfRationalAvg /= NAVG;
+	// g.pfAllSqdAvg /= NAVG;
+	// g.pfConfSqdAvg /= NAVG;
+	// g.pfRationalSqdAvg /= NAVG;
 }
 
 void print_result(float coverage) {

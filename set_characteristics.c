@@ -17,15 +17,12 @@ void initialize_sensus() {
 	g.numRational = 0;
 }
 
-void vaccinate_everyone() {
-	for (unsigned int j = 0; j < g.n; j++) {
-		n[j].immune = get_one_or_zero_randomly(g.coverage);
-	}
-}
 
 void set_characteristics_randomly() {
 	initialize_sensus();
 	for (unsigned int j = 0; j < g.n; j++) {
+
+
 		if(get_one_or_zero_randomly(g.degree_rationality)){
 			n[j].nature = Rational;
 			g.numRational ++;

@@ -44,15 +44,15 @@ typedef struct GLOBALS {
 	unsigned int numRational;
 
 	double st1, ss1;
-    double st2, ss2; 
+    // double st2, ss2; 
 
-	float pfAllAvg;
-	float pfConfAvg;
-	float pfRationalAvg;
+	// float pfAllAvg;
+	// float pfConfAvg;
+	// float pfRationalAvg;
 
-	float pfAllSqdAvg;
-	float pfConfSqdAvg;
-	float pfRationalSqdAvg;
+	// float pfAllSqdAvg;
+	// float pfConfSqdAvg;
+	// float pfRationalSqdAvg;
 
 	float convergenceWatcher[SEASONS];
 
@@ -81,7 +81,7 @@ typedef struct NODE {
 	unsigned int immune;
 	unsigned int decision;
 	float payoff;
-	float payoff_each; // Each SIR simulation repeated NAVG times, 
+	// float payoff_each; // Each SIR simulation repeated NAVG times, 
 					   //necessary to calculate the expected payoff of each group in every simulation
 	float time;
 
@@ -127,8 +127,6 @@ extern void print_result(float);
 extern bool check_convergence(int, int, float);
 
 // set-characteristics.c
-extern void vaccinate_everyone();
-extern void set_characteristics();
 extern void set_characteristics_randomly();
 extern void set_characteristics_memory_based();
 
