@@ -27,7 +27,6 @@ void infect() {
 		if (n[you].heap != I_OR_R &&
 		    n[you].immune == 0) {  // if you is S, and not immune, you
 					     // can be infected.
-
 			t = now + g.rexp[pcg_16()];
 
 			if ((t < n[me].time) && (t < n[you].time)) {
@@ -87,10 +86,11 @@ int main(int argc, char *argv[]) {
 
 		for (int k = 0; k < NAVG; k++) {
 			sir();
-			calculate_outbreaksize_and_timetoext();
-		}
+			add_to_tmp();
+			}
 		calculate_payff_each_agent();
 		finalize_result_each_season();
+
 		g.convergenceWatcher[run] = (float)g.numCf/g.n;
 
 		if (run < 5) {

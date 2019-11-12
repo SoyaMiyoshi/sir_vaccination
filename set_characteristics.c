@@ -22,7 +22,6 @@ void set_characteristics_randomly() {
 	initialize_sensus();
 	for (unsigned int j = 0; j < g.n; j++) {
 
-
 		if(get_one_or_zero_randomly(g.degree_rationality)){
 			n[j].nature = Rational;
 			g.numRational ++;

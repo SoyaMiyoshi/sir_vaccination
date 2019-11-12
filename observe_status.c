@@ -12,7 +12,7 @@ extern NODE *n;
 
 extern FILE *logfile;
 
-void calculate_outbreaksize_and_timetoext() {
+void add_to_tmp(){
 	g.ss1 += (double)g.s;
 	// g.ss2 += SQ((double)g.s);  // stderr を計算するため
 	// g.st1 += g.t;
