@@ -43,19 +43,9 @@ typedef struct GLOBALS {
 	unsigned int numCf;
 	unsigned int numRational;
 
-	double st1, ss1;
-    // double st2, ss2; 
-
-	// float pfAllAvg;
-	// float pfConfAvg;
-	// float pfRationalAvg;
-
-	// float pfAllSqdAvg;
-	// float pfConfSqdAvg;
-	// float pfRationalSqdAvg;
+	double ss1, utility;
 
 	float convergenceWatcher[SEASONS];
-
 	float t;
 	// FOR RNG
 	uint64_t state;
@@ -115,7 +105,7 @@ extern void set_global();
 // extern void create_dir_and_file();
 
 // make_strategy.c
-extern void make_strategy();
+extern void vaccinate();
 
 // observe_status.c
 extern void add_to_tmp();
@@ -128,7 +118,7 @@ extern bool check_convergence(int, int, float);
 
 // set-characteristics.c
 extern void set_characteristics_randomly();
-extern void set_characteristics_memory_based();
+extern void set_characteristics_using_memory();
 
 // linked-list.c
 extern struct oneMemory * addToLink(struct oneMemory *, float, enum Nature);

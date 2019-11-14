@@ -82,29 +82,39 @@ int main(int argc, char *argv[]) {
 	set_global(argc, argv);
 
 	for (int run = 0; run < SEASONS; run++) {
-		reset_result_each_season();
+		// Reset outbreak size and utility
+		g.ss1 = 0;
+		g.utility = 0;
 
 		for (int k = 0; k < NAVG; k++) {
 			sir();
-			add_to_tmp();
-			}
-		calculate_payff_each_agent();
-		finalize_result_each_season();
+			// Sum up outbreak size 
+			g.ss1 += (double)g.s;
+		}
 
-		g.convergenceWatcher[run] = (float)g.numCf/g.n;
+		// Take average of payoff, add it to memory,
+		// And take average of outbreaksize(ss1)
+		// Also calculate utility
+		for (unsigned int ind = 0; ind < g.n; ind++) {
+			if (n[ind].immune == 0) {
+				n[ind].payoff = n[ind].payoff / (float)NAVG;
+			}
+			n[ind].tail = addToLink(n[ind].tail, n[ind].payoff, n[ind].nature);
+			g.utility += n[ind].payoff;
+		}
+		g.ss1 /= NAVG;
+		g.convergenceWatcher[run] = (float)g.ss1/g.n;
 
 		if (run < 5) {
-			add_to_memory();
 			set_characteristics_randomly();
-			make_strategy();
+			vaccinate();
 		} else if ( run < SEASONS - 1 ) {
-			if ( 20 < run && check_convergence(run, 5, 0.00005)) {
+			if ( 100 < run && check_convergence(run, 5, 0.0002)) {
 				print_result(g.coverage);
 				break;
 			}
-			add_to_memory_and_remove_old();
-			set_characteristics_memory_based();
-			make_strategy();
+			set_characteristics_using_memory();
+			vaccinate();
 		} else {
 			print_result(g.coverage);
 		}

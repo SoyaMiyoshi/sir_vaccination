@@ -17,33 +17,82 @@ void initialize_sensus() {
 	g.numRational = 0;
 }
 
+void make_decision(unsigned int index) {
+
+	unsigned int you;
+	
+	if (n[index].nature == Conforming) {
+			g.numCf++;
+			unsigned int count = 0;
+
+			if (n[index].immune == 1) {
+				count += 1;
+			}
+
+			for (unsigned int i = 0; i < n[index].deg; i++) {
+				you = n[index].nb[i];
+				if (n[you].immune == 1) count++;
+			}
+
+			if (n[index].deg + 1 > 2 * count) {
+				n[index].decision = 0;
+			}
+
+			if (n[index].deg + 1 == 2 * count) {
+				n[index].decision = n[index].immune;
+			}
+
+			if (n[index].deg + 1 < 2 * count) {
+				n[index].decision = 1;
+			}
+		}
+
+	if (n[index].nature == Rational) {
+			g.numRational++;
+
+			float max = n[index].payoff;
+			int successful = index;
+
+			for (unsigned int i = 0; i < n[index].deg; i++) {
+				you = n[index].nb[i];
+				if (n[you].payoff > max) {
+					max = n[you].payoff;
+					successful = you;
+				}
+			}
+			n[index].decision = n[successful].immune;
+		}
+		
+	if (get_one_or_zero_randomly(0.01)) {
+            n[index].decision = !n[index].decision;
+		}
+}
 
 void set_characteristics_randomly() {
 	initialize_sensus();
 	for (unsigned int j = 0; j < g.n; j++) {
-
 		if(get_one_or_zero_randomly(g.degree_rationality)){
 			n[j].nature = Rational;
-			g.numRational ++;
 		}
 		else{
 			n[j].nature = Conforming;
-			g.numCf ++;
 		}
+		make_decision(j);
 	}
 }
 
-// This function to model the spread of conformism 
-// To do : which of the parametar spreads conformism in this setting if modelled this way? 
-// Actually referring to the same data each season is inefficient.
-void set_characteristics_memory_based() {
+void set_characteristics_using_memory() {
 	initialize_sensus();
 	for (unsigned int index = 0; index < g.n; index++) {
-		struct oneMemory * ref  = malloc(sizeof(struct oneMemory));
+		
+		// Forget the oldest memory
+		n[index].head = removeHeadFromLink(n[index].head);
 
-		float experience_rational = 0.0;
+		// Form characteristics based on memory
+		struct oneMemory * ref  = malloc(sizeof(struct oneMemory));
+		float payoff_rational = 0.0;
 		int num_rational = 0;
-		float experience_conforming = 0.0;
+		float payoff_conforming = 0.0;
 		int num_conforming = 0;
 
 		ref = n[index].head -> next;
@@ -51,12 +100,12 @@ void set_characteristics_memory_based() {
 
 			if (ref -> nature == Rational) {
 				num_rational ++;
-				experience_rational += ref -> payoff;
+				payoff_rational += ref -> payoff;
 			}
 
 			else {
 				num_conforming ++;
-				experience_conforming += ref -> payoff;
+				payoff_conforming += ref -> payoff;
 			}
 			ref = ref -> next;
     	}
@@ -70,14 +119,13 @@ void set_characteristics_memory_based() {
 		}
 
 		if (num_rational != 0 && num_conforming != 0) {
-			if (experience_rational / num_rational > experience_conforming/ num_conforming) {
+			if (payoff_rational/ num_rational > payoff_conforming/ num_conforming) {
 				n[index].nature = Rational;
 			} else {
 				n[index].nature = Conforming;
 			}
 		}
 
-		// mutation
 		if (get_one_or_zero_randomly(0.01)) {
 			if (n[index].nature == Conforming) {
 				n[index].nature = Rational;
@@ -87,11 +135,6 @@ void set_characteristics_memory_based() {
 			}
 		}
 
-		if (n[index].nature == Conforming) {
-			g.numCf++;
-		} else {
-			g.numRational++;
-		}
-
+		make_decision(index);
 	}
 }
