@@ -26,16 +26,3 @@ struct oneMemory * removeHeadFromLink(struct oneMemory * head){
     // return new head 
     return(tmp);
 }
-
-void add_to_memory() {
-	for (unsigned int ind = 0 ; ind < g.n; ind++) {
-		n[ind].tail = addToLink(n[ind].tail, n[ind].payoff, n[ind].nature);
-	}
-}
-
-void add_to_memory_and_remove_old() {
-	for (unsigned int ind = 0 ; ind < g.n; ind++) {
-		n[ind].tail = addToLink(n[ind].tail, n[ind].payoff, n[ind].nature);
-		n[ind].head = removeHeadFromLink(n[ind].head);
-	}
-}

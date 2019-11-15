@@ -43,17 +43,7 @@ typedef struct GLOBALS {
 	unsigned int numCf;
 	unsigned int numRational;
 
-	double st1, ss1;
-    // double st2, ss2; 
-
-	// float pfAllAvg;
-	// float pfConfAvg;
-	// float pfRationalAvg;
-
-	// float pfAllSqdAvg;
-	// float pfConfSqdAvg;
-	// float pfRationalSqdAvg;
-
+	double ss1, utility;
 	float convergenceWatcher[SEASONS];
 
 	float t;
@@ -81,8 +71,6 @@ typedef struct NODE {
 	unsigned int immune;
 	unsigned int decision;
 	float payoff;
-	// float payoff_each; // Each SIR simulation repeated NAVG times, 
-					   //necessary to calculate the expected payoff of each group in every simulation
 	float time;
 
 	enum Nature nature;
@@ -111,28 +99,11 @@ extern float get_random_float();
 // set_global.c
 extern void set_global();
 
-// create_dir_and_file.c
-// extern void create_dir_and_file();
-
-// make_strategy.c
-extern void make_strategy();
-
-// observe_status.c
-extern void add_to_tmp();
 // extern void calculate_payoff_each_group();
-extern void reset_result_each_season();
-extern void calculate_payff_each_agent();
-extern void finalize_result_each_season();
 extern void print_result(float);
 extern bool check_convergence(int, int, float);
-
-// set-characteristics.c
-extern void set_characteristics_randomly();
-extern void set_characteristics_memory_based();
 
 // linked-list.c
 extern struct oneMemory * addToLink(struct oneMemory *, float, enum Nature);
 extern struct oneMemory * removeHeadFromLink(struct oneMemory *);
-extern void add_to_memory();
-extern void add_to_memory_and_remove_old();
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
