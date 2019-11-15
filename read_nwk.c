@@ -35,10 +35,6 @@ void read_data(FILE *fp) {
 
 	// initialize agents , and 
 	// allocate adjacency lists
-
-	g.numCf = 0;
-	g.numRational = 0;
-
 	for (i = 0; i < g.n; i++) {
 		// initilaize an agent
 		n[i].payoff = 0;
@@ -54,11 +50,6 @@ void read_data(FILE *fp) {
 		n[i].immune = get_one_or_zero_randomly(g.coverage);
 		if(get_one_or_zero_randomly(g.degree_rationality)){
 			n[i].nature = Rational;
-			g.numRational ++;
-		}
-		else{
-			n[i].nature = Conforming;
-			g.numCf ++;
 		}
 	
 	}

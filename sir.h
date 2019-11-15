@@ -40,10 +40,7 @@ typedef struct GLOBALS {
 	float vac_cost;  // 0 < this < 1 argv[4]
 	float degree_rationality; // argv[6]
 
-	unsigned int numCf;
-	unsigned int numRational;
-
-	double ss1, utility;
+	double ss1;
 	float convergenceWatcher[SEASONS];
 
 	float t;
@@ -72,9 +69,7 @@ typedef struct NODE {
 	unsigned int decision;
 	float payoff;
 	float time;
-
 	enum Nature nature;
-
 	struct oneMemory * head;
 	struct oneMemory * tail;
 

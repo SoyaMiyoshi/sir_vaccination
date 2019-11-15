@@ -128,7 +128,6 @@ void make_decision(int me) {
 			}
 		}
 		n[me].decision = n[successful].immune;
-
 	}
 	
 	// Mutation at a low probability
@@ -179,17 +178,13 @@ int main(int argc, char *argv[]) {
 		g.convergenceWatcher[run] = (float)g.ss1/g.n;
 
 		if (run < 5) {
-			g.numCf = 0;
-			g.numRational = 0;
 			for (unsigned int j = 0; j < g.n; j++) {
 				n[j].tail = addToLink(n[j].tail, n[j].payoff, n[j].nature);
 				if (get_one_or_zero_randomly(g.degree_rationality)) {
 					n[j].nature = Rational;
-					g.numRational ++;
 				}
 				else{
 					n[j].nature = Conforming;
-					g.numCf ++;
 				}
 				make_decision(j);
 			}
@@ -200,9 +195,6 @@ int main(int argc, char *argv[]) {
 				print_result(g.coverage);
 				break;
 			}
-
-			g.numCf = 0;
-			g.numRational = 0;
 
 			for (unsigned int index = 0; index < g.n; index++) {
 				n[index].tail = addToLink(n[index].tail, n[index].payoff, n[index].nature);
@@ -252,12 +244,6 @@ int main(int argc, char *argv[]) {
 					else {
 						n[index].nature = Conforming;
 					}
-				}
-
-				if (n[index].nature == Conforming) {
-					g.numCf++;
-				} else {
-					g.numRational++;
 				}
 				make_decision(index);
 			}
