@@ -54,8 +54,8 @@ void print_result(float coverage) {
     printf("%g ", (double)nc/g.n); // Proportion of conforming nodes 
 	printf("%f ", coverage);
 	printf("%f %f ", ua1, ua2);
-	printf("%f %f ", ur1, ur2);
 	printf("%f %f ", uc1, uc2);
+	printf("%f %f ", ur1, ur2);
 	printf("%f %f \n", nv1, nv2);
 
 }

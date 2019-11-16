@@ -48,9 +48,6 @@ void read_data(FILE *fp) {
 		n[i].deg = 0;
 
 		n[i].immune = get_one_or_zero_randomly(g.coverage);
-		if(get_one_or_zero_randomly(g.degree_rationality)){
-			n[i].nature = Rational;
-		}
 	
 	}
 

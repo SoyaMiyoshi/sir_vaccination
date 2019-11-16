@@ -166,7 +166,7 @@ int main(int argc, char *argv[]) {
 		for (int k = 0; k < NAVG; k++) {
 			sir();
 			g.ss1 += (double)g.s;
-			}
+		}
 
 		for (unsigned int ind = 0; ind < g.n; ind++) {
 			if (n[ind].immune == 0) {
@@ -177,7 +177,18 @@ int main(int argc, char *argv[]) {
 		g.ss1 /= NAVG;
 		g.convergenceWatcher[run] = (float)g.ss1/g.n;
 
-		if (run < 5) {
+		if (run == 0) {
+			for (unsigned int j = 0; j < g.n; j++) {
+				if (get_one_or_zero_randomly(g.degree_rationality)) {
+						n[j].nature = Rational;
+					} else {
+						n[j].nature = Conforming;
+					}
+					make_decision(j);
+				}
+			vaccinate();
+		}
+		if (0 < run && run < 6) {
 			for (unsigned int j = 0; j < g.n; j++) {
 				n[j].tail = addToLink(n[j].tail, n[j].payoff, n[j].nature);
 				if (get_one_or_zero_randomly(g.degree_rationality)) {
@@ -234,7 +245,7 @@ int main(int argc, char *argv[]) {
 					} else {
 						n[index].nature = Conforming;
 					}
-				}
+				}			
 
 				// mutation
 				if (get_one_or_zero_randomly(0.01)) {
