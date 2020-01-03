@@ -16,15 +16,11 @@ void set_global(int argc, char *argv[]) {
 	FILE *fp;
 
 	// a help message
-	if ((argc < 7) || (argc > 8)) {
+	if ((argc < 8) || (argc > 9)) {
 		fprintf(
 		    stderr,
 		    "usage: ./sir 1[nwk file] 2[beta] 3[initial coverage] \n"
-		    "4[cost of vaccination] 5[probability of becoming rational] 6[filename] <seed>\n"
-		    "Note that 3[initial coverage]"
-		    "refers to the proportion of the population "
-		    "that "
-		    "choose to vaccinate in initial stage\n"
+		    "4[cost of vaccination] 5[probability of becoming rational] 6[length of memory] 7[filename] 8<seed>\n"
 		 	);
 		exit(1);
 	}
@@ -49,8 +45,10 @@ void set_global(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	if (argc == 8)
-		g.state = (uint64_t)strtoull(argv[7], NULL, 10);
+	g.memory_length = atoi(argv[6]);
+
+	if (argc == 9)
+		g.state = (uint64_t)strtoull(argv[8], NULL, 10);
 	else
 		pcg_init();
 	

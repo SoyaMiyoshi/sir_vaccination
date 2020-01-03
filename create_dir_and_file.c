@@ -30,23 +30,23 @@
 // 	snprintf(cs, char_len, "%2.2f\n", g.coverage);
 // 	snprintf(vs, char_len, "%2.2f\n", g.vac_cost);
 
-// 	if (strcmp(argv[6], b) == 0) {
+// 	if (strcmp(argv[7], b) == 0) {
 // 		// fprintf(stderr,"vary beta\n");
 // 		sprintf(log_dirname, "log/c=%s:v=%s", cs, vs);
 // 		sprintf(log_filename, "log/c=%s:v=%s/b=%s.txt", cs,
 // 			vs, bs);
-// 	} else if (strcmp(argv[6], c) == 0) {
+// 	} else if (strcmp(argv[7], c) == 0) {
 // 		// fprintf(stderr,"vary initial coverage\n");
 // 		sprintf(log_dirname, "log/b=%s:v=%s", bs, vs);
 // 		sprintf(log_filename, "log/b=%s:v=%s/c=%s.txt", bs,
 // 			vs, cs);
-// 	} else if (strcmp(argv[6], v) == 0) {
+// 	} else if (strcmp(argv[7], v) == 0) {
 // 		// fprintf(stderr, "vary vaccination cost\n");
 // 		sprintf(log_dirname, "log/b=%s:c=%s", bs, cs);
 // 		sprintf(log_filename, "log/b=%s:c=%s/v=%s.txt", bs,
 // 			cs, vs);
 // 	} else {
-// 		//printf("argv[5] should be 'b', 'c', or 'v'.\n");
+// 		//printf("argv[7] should be 'b', 'c', or 'v'.\n");
 // 	}
 
 // 	if (stat(log_dirname, &st) == -1) {

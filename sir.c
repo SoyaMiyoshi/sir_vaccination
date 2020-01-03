@@ -9,6 +9,7 @@
 
 GLOBALS g;
 NODE *n;
+RECORD record;
 
 void infect() {
 	unsigned int i, you, me = g.heap[1];
@@ -175,7 +176,8 @@ int main(int argc, char *argv[]) {
 		}
 
 		g.ss1 /= NAVG;
-		g.convergenceWatcher[run] = (float)g.ss1/g.n;
+		// printf("Run %d, Outbreak size %f \n", run, (float)g.ss1/g.n);
+		// g.convergenceWatcher[run] = (float)g.ss1/g.n;
 
 		if (run == 0) {
 			for (unsigned int j = 0; j < g.n; j++) {
@@ -185,29 +187,33 @@ int main(int argc, char *argv[]) {
 						n[j].nature = Conforming;
 					}
 					make_decision(j);
-				}
+			}
 			vaccinate();
-		}
-		if (0 < run && run < 6) {
+		} else if (run < g.memory_length + 1) {
 			for (unsigned int j = 0; j < g.n; j++) {
 				n[j].tail = addToLink(n[j].tail, n[j].payoff, n[j].nature);
 				if (get_one_or_zero_randomly(g.degree_rationality)) {
 					n[j].nature = Rational;
-				}
-				else{
+				} else {
 					n[j].nature = Conforming;
 				}
 				make_decision(j);
 			}
 			vaccinate();
-		} else if ( run < SEASONS - 1 ) {
+		} else if (run < SEASONS - 2) {
 
-			if ( 100 < run && check_convergence(run, 5, 0.0002)) {
-				print_result(g.coverage);
-				break;
+			if ( SEASONS - 102 < run ) {
+				// run 199 から 297 までやる (99回)
+				record.coverage += g.coverage;
+				record.outbreak_size += g.ss1;
 			}
 
 			for (unsigned int index = 0; index < g.n; index++) {
+
+				if (n[index].nature == Conforming && 199 < run) {
+					record.proportion_conformists += 1;
+				}
+
 				n[index].tail = addToLink(n[index].tail, n[index].payoff, n[index].nature);
 				n[index].head = removeHeadFromLink(n[index].head);
 
@@ -219,12 +225,11 @@ int main(int argc, char *argv[]) {
 
 				ref = n[index].head -> next;
 				while (ref != n[index].tail) {
+
 					if (ref -> nature == Rational) {
 						num_rational ++;
 					 	payoff_rational += ref -> payoff;
-					}
-
-					else {
+					} else {
 						num_conforming ++;
 						payoff_conforming += ref -> payoff;
 					}
@@ -245,25 +250,38 @@ int main(int argc, char *argv[]) {
 					} else {
 						n[index].nature = Conforming;
 					}
-				}			
+				}
 
 				// mutation
 				if (get_one_or_zero_randomly(0.01)) {
 					if (n[index].nature == Conforming) {
 						n[index].nature = Rational;
-					}
-					else {
+					} else {
 						n[index].nature = Conforming;
 					}
 				}
 				make_decision(index);
 			}
 			vaccinate();
-		} else {
-			print_result(g.coverage);
-		}
+		} else if ( run == SEASONS - 1 ) {
 
+			for (unsigned int index = 0; index < g.n; index++) {
+				if (n[index].nature == Conforming) {
+					record.proportion_conformists += 1;
+				}
+			}
+
+			record.coverage += g.coverage;
+			record.outbreak_size += g.ss1;
+		}
 	}
+
+	record.proportion_conformists /= 100*g.n;
+	record.coverage /= 100;
+	record.outbreak_size /= 100*g.n;
+
+	printf("%f %f %f \n", record.proportion_conformists,
+	record.coverage, record.outbreak_size);
 
 	for (unsigned int re = 0; re < g.n; re++) free(n[re].nb);
 	free(n);
