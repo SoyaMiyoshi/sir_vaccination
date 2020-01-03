@@ -39,6 +39,7 @@ typedef struct GLOBALS {
 	float coverage;  // argv[3]
 	float vac_cost;  // 0 < this < 1 argv[4]
 	float degree_rationality; // argv[6]
+	int memory_length;
 
 	double ss1;
 	float convergenceWatcher[SEASONS];

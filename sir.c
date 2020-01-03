@@ -175,6 +175,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		g.ss1 /= NAVG;
+		printf("Run %d, Outbreak size %f \n", run, (float)g.ss1/g.n);
 		g.convergenceWatcher[run] = (float)g.ss1/g.n;
 
 		if (run == 0) {
@@ -188,7 +189,7 @@ int main(int argc, char *argv[]) {
 				}
 			vaccinate();
 		}
-		if (0 < run && run < 6) {
+		if (0 < run && run < g.memory_length + 1) {
 			for (unsigned int j = 0; j < g.n; j++) {
 				n[j].tail = addToLink(n[j].tail, n[j].payoff, n[j].nature);
 				if (get_one_or_zero_randomly(g.degree_rationality)) {
@@ -202,7 +203,7 @@ int main(int argc, char *argv[]) {
 			vaccinate();
 		} else if ( run < SEASONS - 1 ) {
 
-			if ( 100 < run && check_convergence(run, 5, 0.0002)) {
+			if ( 200 < run && check_convergence(run, 5, 0.0002)) {
 				print_result(g.coverage);
 				break;
 			}
@@ -219,11 +220,15 @@ int main(int argc, char *argv[]) {
 
 				ref = n[index].head -> next;
 				while (ref != n[index].tail) {
+
+					if(index == 0 && run == g.memory_length + 1) {
+						printf("payoff %f \n", ref -> payoff);
+					}
+
 					if (ref -> nature == Rational) {
 						num_rational ++;
 					 	payoff_rational += ref -> payoff;
 					}
-
 					else {
 						num_conforming ++;
 						payoff_conforming += ref -> payoff;
@@ -245,7 +250,7 @@ int main(int argc, char *argv[]) {
 					} else {
 						n[index].nature = Conforming;
 					}
-				}			
+				}
 
 				// mutation
 				if (get_one_or_zero_randomly(0.01)) {
@@ -262,7 +267,6 @@ int main(int argc, char *argv[]) {
 		} else {
 			print_result(g.coverage);
 		}
-
 	}
 
 	for (unsigned int re = 0; re < g.n; re++) free(n[re].nb);
