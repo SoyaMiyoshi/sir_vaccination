@@ -16,7 +16,7 @@
 
 #define NAVG 25  // number of runs for averages
 
-#define SEASONS 1000
+#define SEASONS 300
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
@@ -25,6 +25,12 @@
 
 // auxiliary macro
 #define SQ(x) ((x) * (x))
+
+typedef struct RECORD {
+	float proportion_conformists;
+	float coverage;
+	float outbreak_size;
+} RECORD;
 
 typedef struct GLOBALS {
 	// INPUT PARAMETERS
@@ -42,7 +48,6 @@ typedef struct GLOBALS {
 	int memory_length;
 
 	double ss1;
-	float convergenceWatcher[SEASONS];
 
 	float t;
 	// FOR RNG
@@ -90,14 +95,14 @@ extern uint32_t pcg_32();
 extern uint32_t pcg_32_bounded();
 extern void pcg_init();
 extern int get_one_or_zero_randomly(float);
-extern float get_random_float();
+// extern float get_random_float();
 
 // set_global.c
 extern void set_global();
 
 // extern void calculate_payoff_each_group();
-extern void print_result(float);
-extern bool check_convergence(int, int, float);
+// extern void print_result(float);
+// extern bool check_convergence(int, int, float);
 
 // linked-list.c
 extern struct oneMemory * addToLink(struct oneMemory *, float, enum Nature);
