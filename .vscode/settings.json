@@ -1,3 +1,7 @@
 {
-    "python.pythonPath": "venv/bin/python3"
+    "python.pythonPath": "venv/bin/python3",
+    "files.associations": {
+        "algorithm": "c",
+        "random": "c"
+    }
 }

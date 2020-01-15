@@ -11,6 +11,8 @@ GLOBALS g;
 NODE *n;
 RECORD record;
 
+FILE *logfile;
+
 void infect() {
 	unsigned int i, you, me = g.heap[1];
 	float t, now = n[me].time;
@@ -159,58 +161,48 @@ void vaccinate() {
 }
 
 void develop_nature(unsigned int index) {
+
+	// Add to storage 
+	if(n[index].nature == Conforming) {
+		n[index].storage.payoff_conforming += n[index].payoff / g.memory_length;
+		n[index].storage.num_conforming += 1;
+	} else {
+		n[index].storage.payoff_rational += n[index].payoff / g.memory_length;
+		n[index].storage.num_rational += 1;
+	}
+
+    // Add to link
 	n[index].tail = addToLink(n[index].tail, n[index].payoff, n[index].nature);
+
+	// Remove from storage 
+	if(n[index].head -> nature == Conforming) {
+		n[index].storage.payoff_conforming -= n[index].head -> payoff / g.memory_length;
+		n[index].storage.num_conforming -= 1;
+	} else {
+		n[index].storage.payoff_rational -= n[index].head -> payoff / g.memory_length;
+		n[index].storage.num_rational -= 1;
+	}
+
+	// Remove from link
 	n[index].head = removeHeadFromLink(n[index].head);
 
-	struct oneMemory * ref  = malloc(sizeof(struct oneMemory));
-	float payoff_rational = 0.0;
-	int num_rational = 0;
-	float payoff_conforming = 0.0;
-	int num_conforming = 0;
-
-	ref = n[index].head -> next;
-	while (ref != n[index].tail) {
-
-		if (ref -> nature == Rational) {
-			num_rational ++;
-			payoff_rational += ref -> payoff;
-		} else {
-			num_conforming ++;
-			payoff_conforming += ref -> payoff;
-		}
-		ref = ref -> next;
-	}
-
-	if (num_rational == 0) {
-		n[index].nature = Conforming;
-	}
-	
-	if (num_conforming == 0) {
-		n[index].nature = Rational;
-	}
-
-	if (num_rational != 0 && num_conforming != 0) {
-		if (payoff_rational / num_rational > payoff_conforming/ num_conforming) {
-			n[index].nature = Rational;
-		} else {
+	if(n[index].storage.num_conforming != 0 && n[index].storage.num_rational != 0){
+		if(n[index].storage.payoff_conforming > n[index].storage.payoff_rational){
 			n[index].nature = Conforming;
+		} else {
+			n[index].nature = Rational;
 		}
 	}
 
-	// mutation
-	if (get_one_or_zero_randomly(0.01)) {
-		if (n[index].nature == Conforming) {
-			n[index].nature = Rational;
-		} else {
-			n[index].nature = Conforming;
-		}
-	}
 }
 
 int main(int argc, char *argv[]) {
 	set_global(argc, argv);
-	int count_a = 0;
-	int count_b = 0;
+
+	char log_dirname[100];
+	char log_filename[100];
+	create_dir_and_file(log_dirname, log_filename, argv);
+	logfile = fopen(log_filename, "w");
 
 	for (int run = 0; run < SEASONS; run++) {
 		g.ss1 = 0;
@@ -298,8 +290,7 @@ int main(int argc, char *argv[]) {
 	record.coverage /= CUTOFF;
 	record.outbreak_size /= CUTOFF*g.n;
 
-	printf("%f %f %f \n", record.proportion_conformists,
-	record.coverage, record.outbreak_size);
+	printf("%f %f %f \n", record.proportion_conformists, record.coverage, record.outbreak_size);
 
 	for (unsigned int re = 0; re < g.n; re++) free(n[re].nb);
 	free(n);
