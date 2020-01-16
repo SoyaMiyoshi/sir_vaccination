@@ -68,6 +68,13 @@ struct oneMemory {
     struct oneMemory *next;
 };
 
+struct Storage {
+	float payoff_conforming;
+	float payoff_rational;
+	int num_conforming;
+	int num_rational;
+} Storage;
+
 typedef struct NODE {
 	unsigned int deg, *nb;  // degree and network neighbors
 	unsigned int heap;
@@ -79,7 +86,7 @@ typedef struct NODE {
 	enum Nature nature;
 	struct oneMemory * head;
 	struct oneMemory * tail;
-
+	struct Storage *storage;
 } NODE;
 
 // heap.c
@@ -104,6 +111,7 @@ extern void set_global();
 // extern void calculate_payoff_each_group();
 // extern void print_result(float);
 // extern bool check_convergence(int, int, float);
+// extern void create_dir_and_file(char *, char *, char *[]);
 
 // linked-list.c
 extern struct oneMemory * addToLink(struct oneMemory *, float, enum Nature);

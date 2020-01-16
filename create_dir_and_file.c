@@ -19,10 +19,14 @@
 // 	char *b = "b";
 // 	char *c = "c";
 // 	char *v = "v";
+//     // char *r = "r";
+//     // char *m = "m";
 
 // 	char bs[char_len] = {'\0'};
 // 	char cs[char_len] = {'\0'};
 // 	char vs[char_len] = {'\0'};
+//     // char rs[char_len] = {'\0'};
+//     // char ms[char_len] = {'\0'};
 
 // 	struct stat st = {0};
 

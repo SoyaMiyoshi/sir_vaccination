@@ -11,6 +11,8 @@ GLOBALS g;
 NODE *n;
 RECORD record;
 
+// FILE *logfile;
+
 void infect() {
 	unsigned int i, you, me = g.heap[1];
 	float t, now = n[me].time;
@@ -82,10 +84,10 @@ void make_decision(int me) {
 	unsigned int you;
 
 	if (n[me].nature == Conforming) {	
-		// Strategy-making for conformists
+		// decision-making for conformists
 		unsigned int count = 0;
 
-		// Include yourself
+		// Include self
 		if (n[me].immune == 1) {
 			count += 1;
 		}
@@ -93,6 +95,10 @@ void make_decision(int me) {
 		// Count the num of neighbours
 		// who chose to vaccinate
 		for (unsigned int i = 0; i < n[me].deg; i++) {
+
+			// if(me == 0) {
+			// 	fprintf(logfile, "I know nb %d whose did %d \n", n[me].nb[i], n[n[me].nb[i]].immune);
+			// }
 			you = n[me].nb[i];
 			if (n[you].immune == 1) count++;
 		}
@@ -111,30 +117,42 @@ void make_decision(int me) {
 		// If more than half
 		if (n[me].deg + 1 < 2 * count) {
 			n[me].decision = 1;
-		}
+		}	
+
+		// if(me == 0) {
+		// 	fprintf(logfile, "I did %d before, and %d did, so I will %d\n",
+		// 		 n[me].immune, count, n[me].decision);
+		// }
 
 	}
 
 	if (n[me].nature == Rational) {
-		// strategy-making for imitators
-		// Include yourself
+		// decision-making for imitators
+		// Include self
 		float max = n[me].payoff;
 		int successful = me;
 
 		for (unsigned int i = 0; i < n[me].deg; i++) {
+			// if(me == 0) {
+			// 	fprintf(logfile, "I know nb %d whose payoff %f \n", n[me].nb[i], n[n[me].nb[i]].payoff);
+			// }
 			you = n[me].nb[i];
 			if (n[you].payoff > max) {
 				max = n[you].payoff;
 				successful = you;
 			}
 		}
+
+		// if(me == 0) {
+		// fprintf(logfile, "Most succ %d whose payoff %f so I do %d\n", successful, n[successful].payoff,  n[successful].immune);
+		// }
 		n[me].decision = n[successful].immune;
 	}
 	
 	// Mutation at a low probability
-	if (get_one_or_zero_randomly(0.01)) {
-			n[me].decision = !n[me].decision;
-	}
+	// if (get_one_or_zero_randomly(0.01)) {
+	// 		n[me].decision = !n[me].decision;
+	// }
 
 }
 
@@ -144,11 +162,11 @@ void vaccinate() {
 	// set immunity based on the decisions, and reset payoff and ninf
 	for (unsigned int me = 0; me < g.n; me++) {
 		n[me].immune = n[me].decision;
+
 		n[me].ninf = 0;
 
 		if (n[me].immune == 1) {
 			n[me].payoff = -g.vac_cost;
-			// n[me].payoff_each = -g.vac_cost;
 			covrg_each += 1.0;
 		}
 		else {
@@ -159,60 +177,71 @@ void vaccinate() {
 }
 
 void develop_nature(unsigned int index) {
+
 	n[index].tail = addToLink(n[index].tail, n[index].payoff, n[index].nature);
+	// if(index == 0){
+	// 	struct oneMemory * ref  = malloc(sizeof(struct oneMemory));
+
+	// 	ref = n[0].head ;
+	// 	while (ref != n[0].tail ) {
+	// 		fprintf(logfile, "Nature %d Payoff %f\n",ref->nature, ref -> payoff);
+	// 		ref = ref -> next;
+	// 	}
+	// }
+
+	// Add new data to storage
+	struct Storage *str = n[index].storage;
+	if(n[index].nature == Conforming) {
+		str -> payoff_conforming += n[index].payoff;
+		str -> num_conforming += 1;
+
+	}
+	if(n[index].nature == Rational) {
+		str -> payoff_rational += n[index].payoff;
+		str -> num_rational += 1;
+	}
+
+	if(str->num_conforming !=0 && str->num_rational!=0) {
+		if(str->payoff_rational/str->num_rational <= str->payoff_conforming/str->num_conforming ) {
+			n[index].nature = Conforming;
+		} else {
+			n[index].nature = Rational;
+		}
+	}
+
+	// if(index == 0){
+	// 	fprintf(logfile, "N_conf %d P_conf %f, N_R %d P_R %f\n next nature: %d \n",
+	// 					str->num_conforming, str->payoff_conforming,
+	// 					str->num_rational, str->payoff_rational,
+	// 					n[index].nature);
+	// }
+
+	// Remove old data from storage (次の性格を決める処理が終わった後にやる)
+	if(n[index].head -> nature == Conforming) {
+		str -> payoff_conforming -= n[index].head -> payoff;
+		str -> num_conforming -= 1;
+	}
+	if(n[index].head -> nature == Rational) {
+		str -> payoff_rational -= n[index].head -> payoff;
+		str -> num_rational -= 1;
+	}
+
 	n[index].head = removeHeadFromLink(n[index].head);
 
-	struct oneMemory * ref  = malloc(sizeof(struct oneMemory));
-	float payoff_rational = 0.0;
-	int num_rational = 0;
-	float payoff_conforming = 0.0;
-	int num_conforming = 0;
-
-	ref = n[index].head -> next;
-	while (ref != n[index].tail) {
-
-		if (ref -> nature == Rational) {
-			num_rational ++;
-			payoff_rational += ref -> payoff;
-		} else {
-			num_conforming ++;
-			payoff_conforming += ref -> payoff;
-		}
-		ref = ref -> next;
-	}
-
-	if (num_rational == 0) {
-		n[index].nature = Conforming;
-	}
-	
-	if (num_conforming == 0) {
-		n[index].nature = Rational;
-	}
-
-	if (num_rational != 0 && num_conforming != 0) {
-		if (payoff_rational / num_rational > payoff_conforming/ num_conforming) {
-			n[index].nature = Rational;
-		} else {
-			n[index].nature = Conforming;
-		}
-	}
-
-	// mutation
-	if (get_one_or_zero_randomly(0.01)) {
-		if (n[index].nature == Conforming) {
-			n[index].nature = Rational;
-		} else {
-			n[index].nature = Conforming;
-		}
-	}
 }
 
 int main(int argc, char *argv[]) {
 	set_global(argc, argv);
-	int count_a = 0;
-	int count_b = 0;
+
+	// char log_dirname[100];
+	// char log_filename[100];
+	// create_dir_and_file(log_dirname, log_filename, argv);
+	// logfile = fopen(log_filename, "w");	
 
 	for (int run = 0; run < SEASONS; run++) {
+
+		// fprintf(logfile, "This is run %d \n", run);
+
 		g.ss1 = 0;
 
 		if( 1 < NAVG ) {
@@ -233,6 +262,8 @@ int main(int argc, char *argv[]) {
 			g.ss1 += (double)g.s;
 		}
 
+		// fprintf(logfile, "(Inside) Nature %d Payoff %f \n", n[0].nature, n[0].payoff);
+
 		if (run == 0) {
 
 			for (unsigned int j = 0; j < g.n; j++) {
@@ -245,20 +276,47 @@ int main(int argc, char *argv[]) {
 			}
 			vaccinate();
 
-		} else if (run < g.memory_length + 1) {
+		} 
+		
+		if (0 < run && run < g.memory_length) {
 
 			for (unsigned int j = 0; j < g.n; j++) {
 				n[j].tail = addToLink(n[j].tail, n[j].payoff, n[j].nature);
+				
+				// Add to storage 
+				if(n[j].nature == Conforming) {
+					n[j].storage->payoff_conforming += n[j].payoff;
+					n[j].storage->num_conforming += 1;
+				} 
+				if(n[j].nature == Rational) {
+					n[j].storage->payoff_rational += n[j].payoff;
+					n[j].storage->num_rational += 1;
+				}
+
 				if (get_one_or_zero_randomly(g.degree_rationality)) {
 					n[j].nature = Rational;
 				} else {
 					n[j].nature = Conforming;
-				}
+				}	
 				make_decision(j);
 			}
 			vaccinate();
 
-		} else if (run < SEASONS - CUTOFF) {
+		}
+
+		if (run == g.memory_length) {
+
+			for (unsigned int index = 0; index < g.n; index++) {
+				n[index].head = removeHeadFromLink(n[index].head);
+
+				develop_nature(index);
+				make_decision(index);
+			}
+			vaccinate();
+
+		} 
+		
+		if (g.memory_length < run && run < SEASONS - CUTOFF) {
 
 			for (unsigned int index = 0; index < g.n; index++) {
 				develop_nature(index);
@@ -266,7 +324,9 @@ int main(int argc, char *argv[]) {
 			}
 			vaccinate();
 
-		} else if (run < SEASONS - 1) {
+		} 
+		
+		if (SEASONS - CUTOFF <= run && run < SEASONS - 1) {
 
 			record.coverage += g.coverage;
 			record.outbreak_size += g.ss1;
@@ -280,7 +340,9 @@ int main(int argc, char *argv[]) {
 			}
 			vaccinate();
 
-		} else if ( run == SEASONS - 1 ) {
+		} 
+		
+		if ( run == SEASONS - 1 ) {
 
 			record.coverage += g.coverage;
 			record.outbreak_size += g.ss1;
@@ -291,15 +353,15 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
-	}
 
+		// fprintf(logfile, "~~~~~\n");
+	}
 
 	record.proportion_conformists /= CUTOFF*g.n;
 	record.coverage /= CUTOFF;
 	record.outbreak_size /= CUTOFF*g.n;
 
-	printf("%f %f %f \n", record.proportion_conformists,
-	record.coverage, record.outbreak_size);
+	printf("%f %f %f \n", record.proportion_conformists, record.coverage, record.outbreak_size);
 
 	for (unsigned int re = 0; re < g.n; re++) free(n[re].nb);
 	free(n);
