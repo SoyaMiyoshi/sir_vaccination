@@ -42,6 +42,12 @@ void read_data(FILE *fp) {
 		n[i].head = malloc(sizeof(struct oneMemory));
 		n[i].tail = malloc(sizeof(struct oneMemory));
 		n[i].head -> next = n[i].tail;
+		n[i].storage = malloc(sizeof(struct Storage));
+		n[i].storage -> payoff_conforming = 0.0;
+		n[i].storage -> payoff_rational= 0.0;
+		n[i].storage -> num_conforming = 0;
+		n[i].storage -> num_rational = 0;
+
 
 		// allocate adhacency lists
 		n[i].nb = malloc(n[i].deg * sizeof(unsigned int));

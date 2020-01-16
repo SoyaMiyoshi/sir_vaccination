@@ -86,7 +86,7 @@ typedef struct NODE {
 	enum Nature nature;
 	struct oneMemory * head;
 	struct oneMemory * tail;
-	struct Storage storage;
+	struct Storage *storage;
 } NODE;
 
 // heap.c

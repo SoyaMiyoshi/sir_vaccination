@@ -181,11 +181,11 @@ void develop_nature(unsigned int index) {
 
 	// Add to storage 
 	if(n[index].nature == Conforming) {
-		n[index].storage.payoff_conforming += n[index].payoff / g.memory_length;
-		n[index].storage.num_conforming += 1;
+		n[index].storage -> payoff_conforming += n[index].payoff;
+		n[index].storage -> num_conforming += 1;
 	} else {
-		n[index].storage.payoff_rational += n[index].payoff / g.memory_length;
-		n[index].storage.num_rational += 1;
+		n[index].storage -> payoff_rational += n[index].payoff;
+		n[index].storage -> num_rational += 1;
 	}
 
     // Add to link
@@ -193,18 +193,21 @@ void develop_nature(unsigned int index) {
 
 	// Remove from storage 
 	if(n[index].head -> nature == Conforming) {
-		n[index].storage.payoff_conforming -= n[index].head -> payoff / g.memory_length;
-		n[index].storage.num_conforming -= 1;
-	} else {
-		n[index].storage.payoff_rational -= n[index].head -> payoff / g.memory_length;
-		n[index].storage.num_rational -= 1;
+		n[index].storage -> payoff_conforming -= n[index].head -> payoff;
+		n[index].storage -> num_conforming -= 1;
+	} 
+	
+	if(n[index].head -> nature == Rational){
+		n[index].storage -> payoff_rational -= n[index].head -> payoff;
+		n[index].storage -> num_rational -= 1;
 	}
 
 	// Remove from link
 	n[index].head = removeHeadFromLink(n[index].head);
 
-	if(n[index].storage.num_conforming != 0 && n[index].storage.num_rational != 0){
-		if(n[index].storage.payoff_conforming > n[index].storage.payoff_rational){
+	if(n[index].storage -> num_conforming != 0 && n[index].storage -> num_rational != 0){
+		if(n[index].storage -> payoff_conforming / n[index].storage -> num_conforming > 
+		n[index].storage -> payoff_rational / n[index].storage -> num_rational){
 			n[index].nature = Conforming;
 		} else {
 			n[index].nature = Rational;
@@ -213,7 +216,7 @@ void develop_nature(unsigned int index) {
 
 	if(index == 0) {
 		struct oneMemory * ref  = malloc(sizeof(struct oneMemory));
-		ref = n[index].head -> next;
+		ref = n[index].head;
 		float payoff_rational = 0.0;
 		int num_rational = 0;
 		float payoff_conforming = 0.0;
@@ -232,8 +235,8 @@ void develop_nature(unsigned int index) {
 		}
 
 		fprintf(logfile, "In storage, num_conf %d num_rati %d payoff_conf %f payoff_rati %f \n",
-								n[index].storage.num_conforming, n[index].storage.num_rational, 
-								n[index].storage.payoff_conforming, n[index].storage.payoff_rational);
+								n[index].storage -> num_conforming, n[index].storage -> num_rational, 
+								n[index].storage -> payoff_conforming, n[index].storage -> payoff_rational);
 		fprintf(logfile, "In linked-ist, num_conf %d num_rati %d payoff_conf %f payoff_rati %f \n",
 								num_conforming, num_rational, payoff_conforming, payoff_rational);
 
@@ -299,12 +302,29 @@ int main(int argc, char *argv[]) {
 
 			for (unsigned int j = 0; j < g.n; j++) {
 				n[j].tail = addToLink(n[j].tail, n[j].payoff, n[j].nature);
+				
+				// Add to storage 
+				if(n[j].nature == Conforming) {
+					n[j].storage->payoff_conforming += n[j].payoff;
+					n[j].storage->num_conforming += 1;
+				} 
+				if(n[j].nature == Rational ) {
+					n[j].storage->payoff_rational += n[j].payoff;
+					n[j].storage->num_rational += 1;
+				}
+
 				if (get_one_or_zero_randomly(g.degree_rationality)) {
 					n[j].nature = Rational;
 				} else {
 					n[j].nature = Conforming;
 				}
 				make_decision(j);
+				if(j==0){
+				fprintf(logfile, "In storage, num_conf %d num_rati %d payoff_conf %f payoff_rati %f \n",
+						n[j].storage -> num_conforming, n[j].storage -> num_rational, 
+						n[j].storage -> payoff_conforming, n[j].storage -> payoff_rational);
+				}
+
 			}
 			vaccinate();
 
