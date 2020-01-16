@@ -111,7 +111,7 @@ extern void set_global();
 // extern void calculate_payoff_each_group();
 // extern void print_result(float);
 // extern bool check_convergence(int, int, float);
-extern void create_dir_and_file(char *, char *, char *[]);
+// extern void create_dir_and_file(char *, char *, char *[]);
 
 // linked-list.c
 extern struct oneMemory * addToLink(struct oneMemory *, float, enum Nature);
