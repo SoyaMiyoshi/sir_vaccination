@@ -84,10 +84,10 @@ void make_decision(int me) {
 	unsigned int you;
 
 	if (n[me].nature == Conforming) {	
-		// Strategy-making for conformists
+		// decision-making for conformists
 		unsigned int count = 0;
 
-		// Include yourself
+		// Include self
 		if (n[me].immune == 1) {
 			count += 1;
 		}
@@ -95,6 +95,9 @@ void make_decision(int me) {
 		// Count the num of neighbours
 		// who chose to vaccinate
 		for (unsigned int i = 0; i < n[me].deg; i++) {
+			if(me == 0) {
+				fprintf(logfile, "I know nb %d whose %d \n", n[me].nb[i], n[n[me].nb[i]].immune);
+			}
 			you = n[me].nb[i];
 			if (n[you].immune == 1) count++;
 		}
@@ -114,29 +117,40 @@ void make_decision(int me) {
 		if (n[me].deg + 1 < 2 * count) {
 			n[me].decision = 1;
 		}
+		
+		if(me == 0) {
+			fprintf(logfile, "Majority %d  as count = %d I have %d nbs \n ~~~~~~~\n", n[me].decision, count, n[me].deg);
+		}
 
 	}
 
 	if (n[me].nature == Rational) {
-		// strategy-making for imitators
-		// Include yourself
+		// decision-making for imitators
+		// Include self
 		float max = n[me].payoff;
 		int successful = me;
 
 		for (unsigned int i = 0; i < n[me].deg; i++) {
+			if(me == 0) {
+				fprintf(logfile, "I know nb %d whose payoff %f \n", n[me].nb[i], n[n[me].nb[i]].payoff);
+			}
 			you = n[me].nb[i];
 			if (n[you].payoff > max) {
 				max = n[you].payoff;
 				successful = you;
 			}
 		}
+
+		if(me == 0) {
+		fprintf(logfile, "Most succ %d whose payoff %f so I do %d\n ~~~~~~~\n", successful, n[successful].payoff,  n[successful].immune);
+		}
 		n[me].decision = n[successful].immune;
 	}
 	
 	// Mutation at a low probability
-	if (get_one_or_zero_randomly(0.01)) {
-			n[me].decision = !n[me].decision;
-	}
+	// if (get_one_or_zero_randomly(0.01)) {
+	// 		n[me].decision = !n[me].decision;
+	// }
 
 }
 
@@ -146,6 +160,9 @@ void vaccinate() {
 	// set immunity based on the decisions, and reset payoff and ninf
 	for (unsigned int me = 0; me < g.n; me++) {
 		n[me].immune = n[me].decision;
+		if(me == 0) {
+			fprintf(logfile, "I am immune? %d \n", n[me].immune);
+		}
 		n[me].ninf = 0;
 
 		if (n[me].immune == 1) {
@@ -194,6 +211,42 @@ void develop_nature(unsigned int index) {
 		}
 	}
 
+	if(index == 0) {
+		struct oneMemory * ref  = malloc(sizeof(struct oneMemory));
+		ref = n[index].head -> next;
+		float payoff_rational = 0.0;
+		int num_rational = 0;
+		float payoff_conforming = 0.0;
+		int num_conforming = 0;
+		
+		while (ref != n[index].tail) {
+
+			if (ref -> nature == Rational) {
+				num_rational ++;
+				payoff_rational += ref -> payoff;
+			} else {
+				num_conforming ++;
+				payoff_conforming += ref -> payoff;
+			}
+			ref = ref -> next;
+		}
+
+		fprintf(logfile, "In storage, num_conf %d num_rati %d payoff_conf %f payoff_rati %f \n",
+								n[index].storage.num_conforming, n[index].storage.num_rational, 
+								n[index].storage.payoff_conforming, n[index].storage.payoff_rational);
+		fprintf(logfile, "In linked-ist, num_conf %d num_rati %d payoff_conf %f payoff_rati %f \n",
+								num_conforming, num_rational, payoff_conforming, payoff_rational);
+
+	}
+	// Mutation at a low probability
+	// if (get_one_or_zero_randomly(0.01)) {
+	// 	if(n[index].nature == Conforming){
+	// 		n[index].nature = Conforming;
+	// 	} else {
+	// 		n[index].nature = Rational;
+	// 	}
+	// }
+
 }
 
 int main(int argc, char *argv[]) {
@@ -203,6 +256,11 @@ int main(int argc, char *argv[]) {
 	char log_filename[100];
 	create_dir_and_file(log_dirname, log_filename, argv);
 	logfile = fopen(log_filename, "w");
+
+	for (unsigned int j = 0; j < 10; j++) {
+		fprintf(logfile, "%d is immune? %d \n", j, n[j].immune);
+	}
+	
 
 	for (int run = 0; run < SEASONS; run++) {
 		g.ss1 = 0;

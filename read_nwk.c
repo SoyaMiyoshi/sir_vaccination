@@ -47,8 +47,9 @@ void read_data(FILE *fp) {
 		n[i].nb = malloc(n[i].deg * sizeof(unsigned int));
 		n[i].deg = 0;
 
+		// is initially vaccinated node?
 		n[i].immune = get_one_or_zero_randomly(g.coverage);
-	
+		if(n[i].immune) n[i].payoff -= g.vac_cost;
 	}
 
 	rewind(fp);
