@@ -1,34 +1,17 @@
-/.idea
-.idea
-.tmp_nwkfile
-/venv
-sir
-rand.c
-a.out
-.DS_Store
-outputs.txt
-input.txt
-output.txt
-.DS_Store
-outputs.txt
-input.txt
-/output
-./output
-output*
-*.py
-sir.py
-sir_deep_directory.py
-sir_printpay
-log
-.ipynb_checkpoints
-.mypy_cache
-jupyter
-*.html
-report
-<
-h
-testConvergence
-*.csv
-batches
-old
-tmp*
+# Ignore everything
+*
+*/
+venv/
+
+# But not these files...
+!.gitignore
+!*.c
+!Makefile
+!sir.h
+!README.md
+!o/
+!nwk/
+# etc...
+
+# ...even if they are in subdirectories
+!*/
