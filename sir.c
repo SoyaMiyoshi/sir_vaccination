@@ -180,7 +180,7 @@ void develop_nature(unsigned int index) {
 
 	n[index].tail = addToLink(n[index].tail, n[index].payoff, n[index].nature);
 	// if(index == 0){
-	// 	struct oneMemory * ref  = malloc(sizeof(struct oneMemory));
+	// 	struct oneMemory *ref;
 
 	// 	ref = n[0].head ;
 	// 	while (ref != n[0].tail ) {
