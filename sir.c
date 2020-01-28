@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#define DEBUG_FLAG 1
+#define DEBUG_FLAG 0
 
 #ifdef DEBUG_FLAG
 #include <assert.h>
