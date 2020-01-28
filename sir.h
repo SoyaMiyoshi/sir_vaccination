@@ -28,14 +28,14 @@
 #define SQ(x) ((x) * (x))
 
 typedef struct RECORD {
-	float proportion_conformists;
-	float coverage;
-	float outbreak_size;
+	double proportion_conformists;
+	double coverage;
+	double outbreak_size;
 } RECORD;
 
 typedef struct GLOBALS {
 	// INPUT PARAMETERS
-	float beta;  // infection rate argv[2]
+	double beta;  // infection rate argv[2]
 	// NETWORK SPECS
 	unsigned int n;
 	// OTHER GLOBALS
@@ -43,18 +43,18 @@ typedef struct GLOBALS {
 	// OUTBREAK STATS
 	unsigned int s;
 	// Vaccination coverage
-	float coverage;  // argv[3]
-	float vac_cost;  // 0 < this < 1 argv[4]
-	float degree_rationality; // argv[6]
+	double coverage;  // argv[3]
+	double vac_cost;  // 0 < this < 1 argv[4]
+	double degree_rationality; // argv[6]
 	int memory_length;
 
 	double ss1;
 
-	float t;
+	double t;
 	// FOR RNG
 	uint64_t state;
 	uint32_t rmem;
-	float rexp[0x10000];
+	double rexp[0x10000];
 } GLOBALS;
 
 enum Nature {
@@ -62,15 +62,15 @@ enum Nature {
     Rational = 1
 };
 
-struct oneMemory {
+typedef struct oneMemory {
     enum Nature nature;
-    float payoff;
+    double payoff;
     struct oneMemory *next;
-};
+} oneMemory;
 
-struct Storage {
-	float payoff_conforming;
-	float payoff_rational;
+typedef struct Storage {
+	double payoff_conforming;
+	double payoff_rational;
 	int num_conforming;
 	int num_rational;
 } Storage;
@@ -78,14 +78,13 @@ struct Storage {
 typedef struct NODE {
 	unsigned int deg, *nb;  // degree and network neighbors
 	unsigned int heap;
-	unsigned int ninf;  // number of infections
 	unsigned int immune;
 	unsigned int decision;
-	float payoff;
-	float time;
+	double payoff;
+	double time;
 	enum Nature nature;
-	struct oneMemory * head;
-	struct oneMemory * tail;
+	struct oneMemory *head;
+	struct oneMemory *tail;
 	struct Storage *storage;
 } NODE;
 
@@ -102,18 +101,18 @@ extern uint16_t pcg_16();
 extern uint32_t pcg_32();
 extern uint32_t pcg_32_bounded();
 extern void pcg_init();
-extern int get_one_or_zero_randomly(float);
-// extern float get_random_float();
+extern int get_one_or_zero_randomly(double);
+// extern double get_random_double();
 
 // set_global.c
 extern void set_global();
 
 // extern void calculate_payoff_each_group();
-// extern void print_result(float);
-// extern bool check_convergence(int, int, float);
+// extern void print_result(double);
+// extern bool check_convergence(int, int, double);
 // extern void create_dir_and_file(char *, char *, char *[]);
 
 // linked-list.c
-extern struct oneMemory * addToLink(struct oneMemory *, float, enum Nature);
+extern struct oneMemory * addToLink(struct oneMemory *, double, enum Nature);
 extern struct oneMemory * removeHeadFromLink(struct oneMemory *);
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

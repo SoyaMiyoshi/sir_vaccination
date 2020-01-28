@@ -12,7 +12,7 @@ extern NODE *n;
 
 extern FILE *logfile;
 
-struct oneMemory * addToLink(struct oneMemory *tail, float payoff, enum Nature nature){
+oneMemory * addToLink(oneMemory *tail, double payoff, enum Nature nature){
     tail->payoff = payoff;
 	tail->nature = nature;
     tail->next = malloc(sizeof(struct oneMemory));
@@ -20,8 +20,8 @@ struct oneMemory * addToLink(struct oneMemory *tail, float payoff, enum Nature n
     return(tail->next);
 }
 
-struct oneMemory * removeHeadFromLink(struct oneMemory * head){
-    struct oneMemory * tmp = head -> next;
+oneMemory * removeHeadFromLink(oneMemory * head){
+    oneMemory * tmp = head -> next;
     free(head);
     // return new head 
     return(tmp);
