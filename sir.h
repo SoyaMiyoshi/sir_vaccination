@@ -14,7 +14,7 @@
 #endif
 #include <stdbool.h>
 
-#define NAVG 1000 // number of runs for averages
+#define NAVG 2000 // number of runs for averages
 
 #define SEASONS 500
 #define CUTOFF 200
