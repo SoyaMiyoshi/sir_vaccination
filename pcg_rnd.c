@@ -82,14 +82,14 @@ uint16_t pcg_16 () {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-int get_one_or_zero_randomly(float trsh){
-    float my_rand = pcg_16()*(1.0)/(1.0+UINT16_MAX);
+int get_one_or_zero_randomly(double trsh){
+    double my_rand = pcg_16()*(1.0)/(1.0+UINT16_MAX);
     if(my_rand < trsh) return 1;
     else return 0;
 }
 
-float get_random_float(){
-    float my_rand = pcg_16()*(1.0)/(1.0+UINT16_MAX);
+double get_random_double(){
+    double my_rand = pcg_16()*(1.0)/(1.0+UINT16_MAX);
     return my_rand;
 }
 

@@ -40,12 +40,16 @@ void set_global(int argc, char *argv[]) {
 	}
 
 	g.degree_rationality = atof(argv[5]);
-	if (g.degree_rationality < 0 || g.degree_rationality > 1) {
+	if ((g.degree_rationality < 0) || (g.degree_rationality > 1)) {
 		fprintf(stderr, "Degree of rationality (6th argv) should 0 to 1 \n");
 		exit(1);
 	}
 
 	g.memory_length = atoi(argv[6]);
+	if (g.memory_length > SEASONS - CUTOFF) {
+		fprintf(stderr, "Memory too long, in current setting it should be less than %d \n", SEASONS - CUTOFF);
+		exit(1);
+	}
 
 	if (argc == 9)
 		g.state = (uint64_t)strtoull(argv[8], NULL, 10);
