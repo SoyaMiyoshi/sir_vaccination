@@ -18,7 +18,7 @@ GLOBALS g;
 NODE *n;
 RECORD record;
 
-// FILE *logfile;
+FILE *logfile;
 
 void infect() {
 	unsigned int i, you, me = g.heap[1];
@@ -308,6 +308,10 @@ void develop_nature(unsigned int index) {
 int main(int argc, char *argv[]) {
 	set_global(argc, argv);
 
+	char log_dirname[100];
+	char log_filename[100];
+	create_dir_and_file(log_dirname, log_filename, argv);
+
 	// The network size is too large for test?
 	#if DEBUG_FLAG
 	if(g.n > debug_array_size) {
@@ -335,9 +339,9 @@ int main(int argc, char *argv[]) {
 
 		// reset num of inf arrays 
 		#if DEBUG_FLAG
-		for (unsigned int i = 0; i < g.n; i++) {
-			n_infs[i] = 0;
-		}
+				for (unsigned int i = 0; i < g.n; i++) {
+					n_infs[i] = 0;
+				}
 		#endif
 
 		g.ss1 = 0.0;
@@ -456,6 +460,8 @@ int main(int argc, char *argv[]) {
 				}
 			}
 		}
+
+
 	}
 
 	record.proportion_conformists /= CUTOFF*g.n;
