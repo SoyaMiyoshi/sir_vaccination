@@ -1,9 +1,3 @@
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// code for SIR on networks by Petter Holme (2018)
-
-// routines for maintaining the binary heap (for the priority queue)
-// the root of the heap is 1 (although it is allocated from 0) for simplicity
-
 #include "sir.h"
 
 extern NODE *n;

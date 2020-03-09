@@ -1,17 +1,6 @@
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// code for temporal network SIR by Petter Holme (2018)
-
-// this file contains the random number generator, derived from the PCG
-// RNG v0.94 http://www.pcg-random.org under the Apache License 2.0
-// http://www.apache.org/licenses/LICENSE-2.0
-
-// 32-bit Output, 64-bit State: PCG-XSH-RS
-
 #include "sir.h"
 
 extern GLOBALS g;
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 void pcg_init () {
 	int fd;
@@ -38,8 +27,6 @@ void pcg_init () {
 
 	g.state = (initstate + 1442695040888963407ULL) * 6364136223846793005ULL + 1442695040888963407ULL;
 }
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 uint32_t pcg_32 () {
 	uint64_t state = g.state;

@@ -1,5 +1,3 @@
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-// code for SIR on networks by Petter Holme (2018)
 #include <fcntl.h>
 #include <float.h>
 #include <limits.h>
