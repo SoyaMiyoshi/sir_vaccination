@@ -1,14 +1,13 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
         {
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/sir",
             // beta, coverage, vac_cost, willingness
-            "args": [".tmp_nwkfile", "2.0", "0", "0.5", "0.1", "b"],
+            "args": ["nwk/test.lnk", "2.0", "0.8", "0.8", "0.1", "4", "b"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

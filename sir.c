@@ -311,6 +311,7 @@ int main(int argc, char *argv[]) {
 	char log_dirname[100];
 	char log_filename[100];
 	create_dir_and_file(log_dirname, log_filename, argv);
+	logfile = fopen(log_filename, "a+");
 
 	// The network size is too large for test?
 	#if DEBUG_FLAG

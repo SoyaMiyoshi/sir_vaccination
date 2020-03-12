@@ -22,7 +22,6 @@ void create_dir_and_file(char *log_dirname, char *log_filename, char *argv[]) {
     char *r = "r";
     char *m = "m";
     
-
 	char bs[char_len] = {'\0'};
 	char cs[char_len] = {'\0'};
 	char vs[char_len] = {'\0'};
@@ -36,8 +35,6 @@ void create_dir_and_file(char *log_dirname, char *log_filename, char *argv[]) {
 	snprintf(vs, char_len, "%2.2f\n", g.vac_cost);
     snprintf(rs, char_len, "%2.2f\n", g.degree_rationality);
 	snprintf(ms, char_len, "%d\n", g.memory_length);
-
-    printf("発火\n");
 
 	if (strcmp(argv[7], b) == 0) {
 		// fprintf(stderr,"vary beta\n");

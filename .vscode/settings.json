@@ -43,5 +43,6 @@
         "iosfwd": "c",
         "stdexcept": "c",
         "assert.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
