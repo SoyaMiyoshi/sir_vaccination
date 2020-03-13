@@ -10,6 +10,7 @@ venv/
 !sir.h
 !README.md
 !nwk/
+!*.py
 # etc...
 
 # ...even if they are in subdirectories
