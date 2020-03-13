@@ -16,9 +16,6 @@ int n_infs[debug_array_size];
 
 GLOBALS g;
 NODE *n;
-RECORD record;
-
-FILE *logfile;
 
 void infect() {
 	unsigned int i, you, me = g.heap[1];
@@ -308,11 +305,6 @@ void develop_nature(unsigned int index) {
 int main(int argc, char *argv[]) {
 	set_global(argc, argv);
 
-	char log_dirname[100];
-	char log_filename[100];
-	create_dir_and_file(log_dirname, log_filename, argv);
-	logfile = fopen(log_filename, "a+");
-
 	// The network size is too large for test?
 	#if DEBUG_FLAG
 	if(g.n > debug_array_size) {
@@ -364,17 +356,20 @@ int main(int argc, char *argv[]) {
 			g.ss1 += (double)g.s;
 		}
 
-	// test if outbreak size is less than (1 - coverage)
-	#if DEBUG_FLAG
-		if (run != 0) assert(g.ss1/g.n <= (1 - g.coverage));
-	#endif 
+		// test if outbreak size is less than (1 - coverage)
+		#if DEBUG_FLAG
+			if (run != 0) assert(g.ss1/g.n <= (1 - g.coverage));
+		#endif 
 
-	// test if payoff is in [-1 ,0]
-	#if DEBUG_FLAG
-		for(unsigned int indd = 0; indd< g.n; indd ++) {
-			assert((-1 <= n[indd].payoff) && (n[indd].payoff <= 0));
-		}
-	#endif 
+		// test if payoff is in [-1 ,0]
+		#if DEBUG_FLAG
+			for(unsigned int indd = 0; indd< g.n; indd ++) {
+				assert((-1 <= n[indd].payoff) && (n[indd].payoff <= 0));
+			}
+		#endif 
+
+		// timeseries printer 
+		printf("%d %f %f\n",run, g.coverage, g.ss1);
 
 		if (run == 0) {
 			for (unsigned int j = 0; j < g.n; j++) {
@@ -394,12 +389,12 @@ int main(int argc, char *argv[]) {
 				
 				// Add to storage 
 				if(n[j].nature == Conforming) {
-					n[j].storage->payoff_conforming += n[j].payoff;
-					n[j].storage->num_conforming += 1;
+					n[j].storage -> payoff_conforming += n[j].payoff;
+					n[j].storage -> num_conforming += 1;
 				} 
 				if(n[j].nature == Rational) {
-					n[j].storage->payoff_rational += n[j].payoff;
-					n[j].storage->num_rational += 1;
+					n[j].storage -> payoff_rational += n[j].payoff;
+					n[j].storage -> num_rational += 1;
 				}
 
 				if (get_one_or_zero_randomly(g.degree_rationality)) {
@@ -416,7 +411,6 @@ int main(int argc, char *argv[]) {
 
 			for (unsigned int index = 0; index < g.n; index++) {
 				n[index].head = removeHeadFromLink(n[index].head);
-
 				develop_nature(index);
 				make_decision(index);
 			}
@@ -424,7 +418,7 @@ int main(int argc, char *argv[]) {
 
 		} 
 		
-		if (g.memory_length < run && run < SEASONS - CUTOFF) {
+		if (g.memory_length < run && run < SEASONS - 1) {
 
 			for (unsigned int index = 0; index < g.n; index++) {
 				develop_nature(index);
@@ -434,42 +428,14 @@ int main(int argc, char *argv[]) {
 
 		} 
 		
-		if (SEASONS - CUTOFF <= run && run < SEASONS - 1) {
+		// final season 
+		// if ( run == SEASONS - 1 ) {
 
-			record.coverage += g.coverage;
-			record.outbreak_size += g.ss1;
-
-			for (unsigned int index = 0; index < g.n; index++) {
-				if (n[index].nature == Conforming) {
-					record.proportion_conformists += 1;
-				}
-				develop_nature(index);
-				make_decision(index);
-			}
-			vaccinate();
-
-		} 
-		
-		if ( run == SEASONS - 1 ) {
-
-			record.coverage += g.coverage;
-			record.outbreak_size += g.ss1;
-
-			for (unsigned int index = 0; index < g.n; index++) {
-				if (n[index].nature == Conforming) {
-					record.proportion_conformists += 1;
-				}
-			}
-		}
-
+		// 	for (unsigned int index = 0; index < g.n; index++) {
+		// 	}
+		// }
 
 	}
-
-	record.proportion_conformists /= CUTOFF*g.n;
-	record.coverage /= CUTOFF;
-	record.outbreak_size /= CUTOFF*g.n;
-
-	printf("%f %f %f \n", record.proportion_conformists, record.coverage, record.outbreak_size);
 
 	for (unsigned int re = 0; re < g.n; re++) free(n[re].nb);
 	free(n);
