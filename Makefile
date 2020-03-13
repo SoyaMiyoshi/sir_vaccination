@@ -3,8 +3,8 @@ CFLAGS = -W -Wall -Ofast -march=native
 LDFLAGS = 
 CC = gcc
 
-# OBJ1 = o/sir.o o/read_nwk.o o/heap.o o/set_global.o o/linked_list.o o/pcg_rnd.o
-OBJ1 = o/sir.o o/read_nwk.o o/heap.o o/set_global.o o/create_dir_and_file.o o/linked_list.o o/pcg_rnd.o
+OBJ1 = o/sir.o o/read_nwk.o o/heap.o o/set_global.o o/linked_list.o o/pcg_rnd.o
+# OBJ1 = o/sir.o o/read_nwk.o o/heap.o o/set_global.o o/create_dir_and_file.o o/linked_list.o o/pcg_rnd.o
 
 
 all : sir
@@ -24,8 +24,8 @@ o/heap.o : $(SRC)/heap.c $(SRC)/sir.h $(SRC)/Makefile
 o/set_global.o : $(SRC)/set_global.c $(SRC)/sir.h $(SRC)/Makefile
 	$(CC) $(CFLAGS) -c $(SRC)/set_global.c -o $@
 
-o/create_dir_and_file.o : $(SRC)/create_dir_and_file.c $(SRC)/sir.h $(SRC)/Makefile
-	$(CC) $(CFLAGS) -c $(SRC)/create_dir_and_file.c -o $@
+# o/create_dir_and_file.o : $(SRC)/create_dir_and_file.c $(SRC)/sir.h $(SRC)/Makefile
+# 	$(CC) $(CFLAGS) -c $(SRC)/create_dir_and_file.c -o $@
 
 o/linked_list.o : $(SRC)/linked_list.c $(SRC)/sir.h $(SRC)/Makefile
 	$(CC) $(CFLAGS) -c $(SRC)/linked_list.c -o $@

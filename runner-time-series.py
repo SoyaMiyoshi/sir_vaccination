@@ -27,7 +27,7 @@ if(not str.isdigit(argv[8])):
     raise ValueError('argv[8] should be integer')
 
 data = {}
-fname = "/home/sou/j/vg-master/res/" + argv[1] + argv[2] + "edges" + argv[3] + "id" + str(i)
+fname = "/home/sou/j/vg-master/res/" + argv[1] + argv[2] + "edges" + argv[3] + "id" + 1
 l = check_output(['./sir',fname, argv[4], argv[5], argv[6], argv[7], argv[8], "b" ,str(getrandbits(64))]).decode("utf-8").strip() # call sir
 for line in l.split("\n"):
     tmp = line.split(" ")
