@@ -7,13 +7,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 #define DEBUG_FLAG 0
+#define DIFF 0.000001 // error は -15の オーダー
 
 #ifdef DEBUG_FLAG
 #include <assert.h>
 #define debug_array_size 100000
 int n_infs[debug_array_size];
-int random_c = 0;
-int random_r = 0;
+int sc = 0;
+int rc = 0;
 #endif
 
 GLOBALS g;
@@ -217,14 +218,14 @@ void develop_nature(unsigned int index) {
 	}
 
 	if(str->num_conforming !=0 && str->num_rational!=0) {
-		if(fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) < 0.0001) {
+		if(fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) < DIFF) {
 			// if similar payoff is expected for 2 nature, then retain
 			// n[index].nature = Conforming;
 			#if DEBUG_FLAG
 				if(str->payoff_rational/str->num_rational < str->payoff_conforming/str->num_conforming) {
-					random_c++;
+					sc++;
 				} else {
-					random_r++;
+					rc++;
 				}
 			#endif
 		} else {
@@ -261,13 +262,15 @@ void develop_nature(unsigned int index) {
 		assert(count_conforiming == str->num_conforming);
 		assert(count_rational == str->num_rational);
 
-		if(fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) < 0.0001) {
-			assert(fabs((payoff_rational/count_rational) - (payoff_conforming/count_conforiming)) < 0.0001);
+		if(fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) < DIFF) {
+			assert(fabs((payoff_rational/count_rational) - (payoff_conforming/count_conforiming)) < DIFF);
 		}
 
 		if((count_conforiming) && (count_rational)) {
-			if(fabs((payoff_rational/count_rational) - (payoff_conforming/count_conforiming)) < 0.0001) {
-				assert(fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) < 0.0001 );
+			if(fabs((payoff_rational/count_rational) - (payoff_conforming/count_conforiming)) < DIFF) {
+				printf("%e ",fabs((payoff_rational/count_rational) - (payoff_conforming/count_conforiming)) );
+				printf("%e \n",fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) );
+				assert(fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) < DIFF );
 			}
 			else {
 				if((payoff_rational/count_rational) < (payoff_conforming/count_conforiming)) {
@@ -486,7 +489,7 @@ int main(int argc, char *argv[]) {
 	printf("%f %f %f \n", record.proportion_conformists, record.coverage, record.outbreak_size);
 
 	#if DEBUG_FLAG
-		printf("c: %dm r:%d \n", random_c, random_r);
+		printf("c: %dm r:%d \n", sc, rc);
 	#endif
 	
 	return 0;
