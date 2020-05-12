@@ -12,13 +12,13 @@
 #include <assert.h>
 #define debug_array_size 100000
 int n_infs[debug_array_size];
+int random_c = 0;
+int random_r = 0;
 #endif
 
 GLOBALS g;
 NODE *n;
 RECORD record;
-
-// FILE *logfile;
 
 void infect() {
 	unsigned int i, you, me = g.heap[1];
@@ -157,7 +157,10 @@ void vaccinate() {
 					if(n[me].immune) count ++;
 
 					if(n[me].decision) assert(count*2 >= n[me].deg + 1);
-					if(!n[me].decision) assert(count*2 < n[me].deg + 1);
+					if(!n[me].decision) {
+						// printf("count %d, n[0].deg %d \n", count*2, n[me].deg);
+						assert(count*2 <= n[me].deg + 1);
+					}
 				}
 			}
 		#endif
@@ -167,8 +170,7 @@ void vaccinate() {
 		if (n[me].immune == 1) {
 			n[me].payoff = -g.vac_cost;
 			covrg_each += 1.0;
-		}
-		else {
+		} else {
 			n[me].payoff = 0;
 		}	
 	}
@@ -191,28 +193,14 @@ void develop_nature(unsigned int index) {
 
 	// test if memory length is short here
 	#if DEBUG_FLAG
-		if(index == 0) {
-			oneMemory *ref;
-			double payoff_conforming = 0;
-			double payoff_rational = 0;
-			int count = 1;
-
-			ref = n[0].head ;
-			while (ref != n[0].tail ) {
-				if (ref -> nature == Conforming) {
-					payoff_conforming += ref -> payoff;
-				}
-							
-				if (ref -> nature == Rational) {
-					payoff_rational += ref -> payoff;
-				}
-				count++;
-				ref = ref -> next;
-			}
-			assert(count == g.memory_length);
-			if(payoff_conforming && n[index].storage -> payoff_conforming) assert(fabs(payoff_conforming - n[index].storage -> payoff_conforming) < 0.01);
-			if(payoff_rational && n[index].storage -> payoff_rational) assert(fabs(payoff_rational - n[index].storage -> payoff_rational) < 0.01);
+		oneMemory *r;
+		int count = 1;
+		r= n[index].head ;
+		while (r != n[index].tail ) {
+			count++;
+			r = r -> next;
 		}
+		assert(count == g.memory_length);
 	#endif	
 
 	n[index].tail = addToLink(n[index].tail, n[index].payoff, n[index].nature);
@@ -229,10 +217,22 @@ void develop_nature(unsigned int index) {
 	}
 
 	if(str->num_conforming !=0 && str->num_rational!=0) {
-		if(str->payoff_rational/str->num_rational <= str->payoff_conforming/str->num_conforming ) {
-			n[index].nature = Conforming;
+		if(fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) < 0.0001) {
+			// if similar payoff is expected for 2 nature, then retain
+			// n[index].nature = Conforming;
+			#if DEBUG_FLAG
+				if(str->payoff_rational/str->num_rational < str->payoff_conforming/str->num_conforming) {
+					random_c++;
+				} else {
+					random_r++;
+				}
+			#endif
 		} else {
-			n[index].nature = Rational;
+			if(str->payoff_rational/str->num_rational < str->payoff_conforming/str->num_conforming ) {
+				n[index].nature = Conforming;
+			} else {
+				n[index].nature = Rational;
+			} 
 		}
 	}
 
@@ -248,47 +248,51 @@ void develop_nature(unsigned int index) {
 		while ( ref != n[index].tail ) {
 			if (ref -> nature == Conforming) {
 				payoff_conforming += ref -> payoff;
+				count_conforiming++;
 			}
 						
 			if (ref -> nature == Rational) {
 				payoff_rational += ref -> payoff;
+				count_rational++;
 			}
 			ref = ref -> next;
 		}
 
-		if((count_conforiming) && (count_conforiming)) {
-			if((payoff_rational/count_rational) < (payoff_conforming/count_conforiming)) {
-				assert(n[index].nature == Conforming);
-			} else {
-				assert(n[index].nature == Rational);
+		assert(count_conforiming == str->num_conforming);
+		assert(count_rational == str->num_rational);
+
+		if(fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) < 0.0001) {
+			assert(fabs((payoff_rational/count_rational) - (payoff_conforming/count_conforiming)) < 0.0001);
+		}
+
+		if((count_conforiming) && (count_rational)) {
+			if(fabs((payoff_rational/count_rational) - (payoff_conforming/count_conforiming)) < 0.0001) {
+				assert(fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) < 0.0001 );
 			}
+			else {
+				if((payoff_rational/count_rational) < (payoff_conforming/count_conforiming)) {
+					assert(n[index].nature == Conforming);
+				} 
+				if((payoff_rational/count_rational) > (payoff_conforming/count_conforiming)) {
+					assert(n[index].nature == Rational);
+				}
+			}
+		} else if ( count_conforiming == 0 ) {
+			assert(n[index].nature == Rational);
+		} else {
+			assert(n[index].nature == Conforming);
 		}
 	#endif
 
-	// test if memory became long here, also if Storage is consistent with LL.
+	// test if memory became long here
 	#if DEBUG_FLAG
-		if ( index == 0) {
-			oneMemory *ref;
-			double payoff_conforming = 0.0;
-			double payoff_rational = 0.0;
-			int count = 0;
-
-			ref = n[0].head ;
-			while ( ref != n[0].tail ) {
-				if ( ref -> nature == Conforming ) {
-					payoff_conforming += ref -> payoff;
-				}
-							
-				if ( ref -> nature == Rational ) {
-					payoff_rational += ref -> payoff;
-				}
-				count++;
-				ref = ref -> next;
-			}
-			assert(count == g.memory_length);
-			if(payoff_conforming && n[index].storage -> payoff_conforming) assert(fabs(payoff_conforming - n[index].storage -> payoff_conforming) < 0.01);
-			if(payoff_rational && n[index].storage -> payoff_rational) assert(fabs(payoff_rational - n[index].storage -> payoff_rational) < 0.01);
+		count = 0;
+		r= n[index].head ;
+		while (r != n[index].tail ) {
+			count++;
+			r = r -> next;
 		}
+		assert(count == g.memory_length);
 	#endif	
 
 	// Remove old data from storage (次の性格を決める処理が終わった後にやる)
@@ -325,7 +329,6 @@ int main(int argc, char *argv[]) {
 				num_immune ++;
 			}
 		}
-		printf("Initial coverage input %lf, actual initial coverage %lf\n", g.coverage, (double)num_immune/g.n);
 		assert(fabs(num_immune*g.vac_cost + tsp )< 0.001);
 		assert( g.coverage <= 1);
 		assert( 0 <= g.coverage );
@@ -384,6 +387,10 @@ int main(int argc, char *argv[]) {
 		} 
 		
 		if (0 < run && run < g.memory_length) {
+			#if DEBUG_FLAG
+				printf("run %d\n", run);
+			#endif
+
 			for (unsigned int j = 0; j < g.n; j++) {
 				n[j].tail = addToLink(n[j].tail, n[j].payoff, n[j].nature);
 				
@@ -409,6 +416,10 @@ int main(int argc, char *argv[]) {
 
 		if (run == g.memory_length) {
 
+			#if DEBUG_FLAG
+				printf("run %d\n", run);
+			#endif
+
 			for (unsigned int index = 0; index < g.n; index++) {
 				n[index].head = removeHeadFromLink(n[index].head);
 
@@ -421,6 +432,10 @@ int main(int argc, char *argv[]) {
 		
 		if (g.memory_length < run && run < SEASONS - CUTOFF) {
 
+			#if DEBUG_FLAG
+				printf("run %d\n", run);
+			#endif
+
 			for (unsigned int index = 0; index < g.n; index++) {
 				develop_nature(index);
 				make_decision(index);
@@ -430,6 +445,9 @@ int main(int argc, char *argv[]) {
 		} 
 		
 		if (SEASONS - CUTOFF <= run && run < SEASONS - 1) {
+			#if DEBUG_FLAG
+				printf("avging run %d\n", run);
+			#endif
 
 			record.coverage += g.coverage;
 			record.outbreak_size += g.ss1;
@@ -446,6 +464,9 @@ int main(int argc, char *argv[]) {
 		} 
 		
 		if ( run == SEASONS - 1 ) {
+			#if DEBUG_FLAG
+				printf("run %d\n", run);
+			#endif
 
 			record.coverage += g.coverage;
 			record.outbreak_size += g.ss1;
@@ -464,10 +485,10 @@ int main(int argc, char *argv[]) {
 
 	printf("%f %f %f \n", record.proportion_conformists, record.coverage, record.outbreak_size);
 
-	for (unsigned int re = 0; re < g.n; re++) free(n[re].nb);
-	free(n);
-	free(g.heap);
-
+	#if DEBUG_FLAG
+		printf("c: %dm r:%d \n", random_c, random_r);
+	#endif
+	
 	return 0;
 }
 

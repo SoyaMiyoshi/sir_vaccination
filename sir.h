@@ -7,23 +7,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#ifdef TIME
-#include <time.h>
-#endif
+
 #include <stdbool.h>
 
-#define NAVG 2000 // number of runs for averages
+#define NAVG 640 // number of runs for averages
 
-#define SEASONS 500
-#define CUTOFF 200
+#define SEASONS 150
+#define CUTOFF 50
 
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
-
-#define S(x) (n[(x)].time > now)
-
-// auxiliary macro
-#define SQ(x) ((x) * (x))
 
 typedef struct RECORD {
 	double proportion_conformists;
@@ -100,15 +93,9 @@ extern uint32_t pcg_32();
 extern uint32_t pcg_32_bounded();
 extern void pcg_init();
 extern int get_one_or_zero_randomly(double);
-// extern double get_random_double();
 
 // set_global.c
 extern void set_global();
-
-// extern void calculate_payoff_each_group();
-// extern void print_result(double);
-// extern bool check_convergence(int, int, double);
-// extern void create_dir_and_file(char *, char *, char *[]);
 
 // linked-list.c
 extern struct oneMemory * addToLink(struct oneMemory *, double, enum Nature);
