@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <float.h>
 #define DEBUG_FLAG 1
-#define DIFF 1.110223e-15
+#define DIFF 0.000001 // error は -15の オーダー
 
 #ifdef DEBUG_FLAG
 #include <assert.h>
