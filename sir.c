@@ -12,7 +12,7 @@
 #ifdef DEBUG_FLAG
 #include <assert.h>
 #define debug_array_size 100000
-int n_infs[debug_array_size];
+double n_infs[debug_array_size];
 int sc = 0;
 int rc = 0;
 #endif
@@ -85,7 +85,7 @@ void sir() {
 		#if DEBUG_FLAG
 			for (i = 0; i < g.n; i++) {
 				if (n[i].time != DBL_MAX) {
-					n_infs[i]++;
+					n_infs[i] += 1.0;
 				}
 				if (!n[i].immune) {
 					assert(fabs(n[i].payoff + n_infs[i]) < 0.001);
@@ -218,10 +218,12 @@ void develop_nature(unsigned int index) {
 	}
 
 	if(str->num_conforming !=0 && str->num_rational!=0) {
-		if(fabs(str->payoff_rational/str->num_rational - str->payoff_conforming/str->num_conforming) < DIFF) {
+		if(fabs(str->payoff_rational*str->num_conforming - str->payoff_conforming*str->num_rational) < DIFF*str->num_rational*str->num_conforming) {
 			// if similar payoff is expected for 2 nature, then retain
 			// n[index].nature = Conforming;
 			#if DEBUG_FLAG
+				assert(g.memory_length == str->num_conforming + str->num_rational);
+
 				if(str->payoff_rational/str->num_rational < str->payoff_conforming/str->num_conforming) {
 					sc++;
 				} else {
@@ -229,7 +231,7 @@ void develop_nature(unsigned int index) {
 				}
 			#endif
 		} else {
-			if(str->payoff_rational/str->num_rational < str->payoff_conforming/str->num_conforming ) {
+			if(str->payoff_rational*str->num_conforming < str->payoff_conforming*str->num_rational ) {
 				n[index].nature = Conforming;
 			} else {
 				n[index].nature = Rational;
@@ -342,7 +344,7 @@ int main(int argc, char *argv[]) {
 		// reset num of inf arrays 
 		#if DEBUG_FLAG
 		for (unsigned int i = 0; i < g.n; i++) {
-			n_infs[i] = 0;
+			n_infs[i] = 0.0;
 		}
 		#endif
 
