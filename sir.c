@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#define DEBUG_FLAG 1
+#define DEBUG_FLAG 0
 #define TIMESERIES_WATCHER 0
 #define DIFF 0.000001 // error は -15の オーダー
 
