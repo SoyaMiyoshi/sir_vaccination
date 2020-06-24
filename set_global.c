@@ -16,11 +16,12 @@ void set_global(int argc, char *argv[]) {
 	FILE *fp;
 
 	// a help message
-	if ((argc < 8) || (argc > 9)) {
+	if ((argc < 10) || (argc > 11)) {
 		fprintf(
 		    stderr,
 		    "usage: ./sir 1[nwk file] 2[beta] 3[initial coverage] \n"
-		    "4[cost of vaccination] 5[probability of becoming rational] 6[length of memory] 7[filename] 8<seed>\n"
+		    "4[cost of vaccination] 5[probability of becoming rational] \n"
+			"6[length of memory] 7[number of iteration] 8[cutoff] 9[navg] 10<seed>\n"
 		 	);
 		exit(1);
 	}
@@ -46,13 +47,32 @@ void set_global(int argc, char *argv[]) {
 	}
 
 	g.memory_length = atoi(argv[6]);
-	if (g.memory_length > SEASONS - CUTOFF) {
-		fprintf(stderr, "Memory too long, in current setting it should be less than %d \n", SEASONS - CUTOFF);
+	g.iterations = atoi(argv[7]);
+	g.cutoff = atoi(argv[8]);
+	g.navg = atoi(argv[9]);
+
+	if(g.iterations < g.cutoff) {
+		fprintf(stderr, "The number of iterations is fewer than the cutoff. \n");
 		exit(1);
 	}
 
-	if (argc == 9)
-		g.state = (uint64_t)strtoull(argv[8], NULL, 10);
+	if(g.navg < 1) {
+		fprintf(stderr, "The number of SIR realization is too few.\n");
+		exit(1);
+	}
+
+	if (g.memory_length > g.iterations - g.cutoff) {
+		fprintf(stderr, "Memory too long, in current setting it should be less than %d \n", g.iterations - g.cutoff);
+		exit(1);
+	}
+
+	if (g.cutoff < 1) {
+		fprintf(stderr, "Cutoff should be more than 1 \n");
+		exit(1);
+	}
+
+	if (argc == 11)
+		g.state = (uint64_t)strtoull(argv[10], NULL, 10);
 	else
 		pcg_init();
 	

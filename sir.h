@@ -10,11 +10,6 @@
 
 #include <stdbool.h>
 
-#define NAVG 640 // number of runs for averages
-
-#define SEASONS 150
-#define CUTOFF 50
-
 #define I_OR_R (UINT_MAX - 1)
 #define NONE UINT_MAX
 
@@ -38,6 +33,9 @@ typedef struct GLOBALS {
 	double vac_cost;  // 0 < this < 1 argv[4]
 	double degree_rationality; // argv[6]
 	int memory_length;
+	int iterations;
+	int cutoff;
+	int navg;
 
 	double ss1;
 

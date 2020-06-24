@@ -339,7 +339,7 @@ int main(int argc, char *argv[]) {
 		assert( 0 <= g.coverage );
 	#endif
 
-	for (int run = 0; run < SEASONS; run++) {
+	for (int run = 0; run < g.iterations; run++) {
 
 		// reset num of inf arrays 
 		#if DEBUG_FLAG
@@ -349,19 +349,19 @@ int main(int argc, char *argv[]) {
 		#endif
 
 		g.ss1 = 0.0;
-		if( 1 < NAVG ) {
-			for (int k = 0; k < NAVG; k++) {
+		if( 1 < g.navg ) {
+			for (int k = 0; k < g.navg; k++) {
 				sir();
 				g.ss1 += (double)g.s;
 			}
 
 			for (unsigned int ind = 0; ind < g.n; ind++) {
 				if (n[ind].immune == 0) {
-					n[ind].payoff = n[ind].payoff / (double)NAVG;
+					n[ind].payoff = n[ind].payoff / (double)g.navg;
 				}
 			}
 
-			g.ss1 /= NAVG;
+			g.ss1 /= (double)g.navg;
 		} else {
 			sir();
 			g.ss1 += (double)g.s;
@@ -435,7 +435,7 @@ int main(int argc, char *argv[]) {
 
 		} 
 		
-		if (g.memory_length < run && run < SEASONS - CUTOFF) {
+		if (g.memory_length < run && run < g.iterations - g.cutoff) {
 
 			#if DEBUG_FLAG
 				printf("run %d\n", run);
@@ -449,7 +449,7 @@ int main(int argc, char *argv[]) {
 
 		} 
 		
-		if (SEASONS - CUTOFF <= run && run < SEASONS - 1) {
+		if (g.iterations - g.cutoff <= run && run < g.iterations - 1) {
 			#if DEBUG_FLAG
 				printf("avging run %d\n", run);
 			#endif
@@ -468,7 +468,7 @@ int main(int argc, char *argv[]) {
 
 		} 
 		
-		if ( run == SEASONS - 1 ) {
+		if ( run == g.iterations - 1 ) {
 			#if DEBUG_FLAG
 				printf("run %d\n", run);
 			#endif
@@ -484,9 +484,9 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	record.proportion_conformists /= CUTOFF*g.n;
-	record.coverage /= CUTOFF;
-	record.outbreak_size /= CUTOFF*g.n;
+	record.proportion_conformists /= g.cutoff*g.n;
+	record.coverage /= g.cutoff;
+	record.outbreak_size /= g.cutoff*g.n;
 
 	printf("%f %f %f \n", record.proportion_conformists, record.coverage, record.outbreak_size);
 
